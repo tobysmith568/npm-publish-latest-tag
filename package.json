@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "name": "npm-latest-tag-github-action",
+  "version": "0.0.0",
+  "description": "Github Action for getting the correct 'latest' tag value for a npm publish version",
+  "keywords": ["GitHub", "Action", "npm", "publish", "version", "latest", "tag"],
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": {
+    "name": "Toby Smith",
+    "email": "tobysmith568@hotmail.co.uk",
+    "url": "https://tobysmith.uk"
+  },
+  "homepage": "https://github.com/tobysmith568/npm-latest-tag-github-action#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobysmith568/npm-latest-tag-github-action.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tobysmith568/npm-latest-tag-github-action/issues"
+  }
+}
