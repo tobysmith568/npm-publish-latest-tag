@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import * as github from "@actions/github";
+import { getPackageJson } from "./utils/package-json";
 
 const main = async () => {
   try {
@@ -10,8 +10,10 @@ const main = async () => {
 };
 
 const runGitHubAction = async () => {
-  const payload = JSON.stringify(github.context.payload, undefined, 2);
-  console.log(`The event payload: ${payload}`);
+  const packageJsonLocation = core.getInput("package-json");
+
+  const packageJson = await getPackageJson(packageJsonLocation);
+  console.log(packageJson);
 };
 
 const handleErrorInGitHubAction = (error: any) => {
