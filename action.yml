@@ -1,0 +1,14 @@
+name: 'npm Latest Tag'
+author: 'tobysmith568'
+description: 'Get the correct 'latest' tag value for a npm publish version'
+inputs:
+  package-json:
+    description: 'Location of the package.json file relative to the repo root'
+    required: true
+    default: './package.json'
+outputs:
+  latestTag:
+    description: 'The string value of the 'latest' tag'
+runs:
+  using: 'node16'
+  main: './dist/index.js'

@@ -3,12 +3,21 @@
   "name": "npm-latest-tag-github-action",
   "version": "0.0.0",
   "description": "Github Action for getting the correct 'latest' tag value for a npm publish version",
-  "keywords": ["GitHub", "Action", "npm", "publish", "version", "latest", "tag"],
+  "keywords": [
+    "GitHub",
+    "Action",
+    "npm",
+    "publish",
+    "version",
+    "latest",
+    "tag"
+  ],
   "license": "ISC",
   "main": "./dist/index.js",
   "prettier": "@tobysmith568/prettier-config",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prepare": "husky install"
   },
   "author": {
     "name": "Toby Smith",
@@ -23,9 +32,14 @@
   "bugs": {
     "url": "https://github.com/tobysmith568/npm-latest-tag-github-action/issues"
   },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0"
+  },
   "devDependencies": {
     "@tobysmith568/prettier-config": "^1.2.0",
     "@types/node": "^17.0.5",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.4",
+    "husky": "^7.0.0"
   }
 }
