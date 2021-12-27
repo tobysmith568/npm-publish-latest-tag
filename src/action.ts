@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { getLatestTag } from ".";
+import { getLatestTag } from "npm-publish-latest-tag";
 
 const main = async () => {
   try {

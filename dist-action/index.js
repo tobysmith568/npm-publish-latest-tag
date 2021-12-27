@@ -1,6 +1,104 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 231:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getLatestTag = void 0;
+const package_json_1 = __nccwpck_require__(188);
+const getLatestTag = (packageJsonPath) => __awaiter(void 0, void 0, void 0, function* () {
+    const packageJson = yield (0, package_json_1.getPackageJson)(packageJsonPath);
+    console.log(packageJson);
+    return "TODO";
+});
+exports.getLatestTag = getLatestTag;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 264:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isPackageJson = void 0;
+const isPackageJson = (subject) => {
+    if (!subject) {
+        return false;
+    }
+    if (typeof subject !== "object") {
+        return false;
+    }
+    if (!subject.version) {
+        return false;
+    }
+    return true;
+};
+exports.isPackageJson = isPackageJson;
+//# sourceMappingURL=package-json.interface.js.map
+
+/***/ }),
+
+/***/ 188:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getPackageJson = void 0;
+const fs_1 = __nccwpck_require__(147);
+const package_json_interface_1 = __nccwpck_require__(264);
+const readFileAsync = (path) => {
+    return new Promise((resolve, reject) => {
+        (0, fs_1.readFile)(path, "utf-8", (err, data) => {
+            if (!!err) {
+                reject(err);
+                return;
+            }
+            resolve(data);
+        });
+    });
+};
+const getPackageJson = (path) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const packageJsonAsString = yield readFileAsync(path);
+        const packageJson = JSON.parse(packageJsonAsString);
+        if (!packageJson || !(0, package_json_interface_1.isPackageJson)(packageJson)) {
+            throw new Error("Invalid package.json");
+        }
+        return packageJson;
+    }
+    catch (_a) {
+        throw new Error(`${path} is not a valid package.json`);
+    }
+});
+exports.getPackageJson = getPackageJson;
+//# sourceMappingURL=package-json.js.map
+
+/***/ }),
+
 /***/ 351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -1571,7 +1669,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __nccwpck_require__(186);
-const _1 = __nccwpck_require__(144);
+const npm_publish_latest_tag_1 = __nccwpck_require__(231);
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield runGitHubAction();
@@ -1582,7 +1680,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 const runGitHubAction = () => __awaiter(void 0, void 0, void 0, function* () {
     const packageJsonLocation = core.getInput("package-json");
-    const latestTag = yield (0, _1.getLatestTag)(packageJsonLocation);
+    const latestTag = yield (0, npm_publish_latest_tag_1.getLatestTag)(packageJsonLocation);
 });
 const handleErrorInGitHubAction = (error) => {
     if (!!(error === null || error === void 0 ? void 0 : error.message)) {
@@ -1598,104 +1696,6 @@ const handleErrorInGitHubAction = (error) => {
 (() => __awaiter(void 0, void 0, void 0, function* () {
     yield main();
 }))();
-
-
-/***/ }),
-
-/***/ 144:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getLatestTag = void 0;
-const package_json_1 = __nccwpck_require__(559);
-const getLatestTag = (packageJsonPath) => __awaiter(void 0, void 0, void 0, function* () {
-    const packageJson = yield (0, package_json_1.getPackageJson)(packageJsonPath);
-    console.log(packageJson);
-    return "TODO";
-});
-exports.getLatestTag = getLatestTag;
-
-
-/***/ }),
-
-/***/ 522:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.isPackageJson = void 0;
-const isPackageJson = (subject) => {
-    if (!subject) {
-        return false;
-    }
-    if (typeof subject !== "object") {
-        return false;
-    }
-    if (!subject.version) {
-        return false;
-    }
-    return true;
-};
-exports.isPackageJson = isPackageJson;
-
-
-/***/ }),
-
-/***/ 559:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getPackageJson = void 0;
-const fs_1 = __nccwpck_require__(147);
-const package_json_interface_1 = __nccwpck_require__(522);
-const readFileAsync = (path) => {
-    return new Promise((resolve, reject) => {
-        (0, fs_1.readFile)(path, "utf-8", (err, data) => {
-            if (!!err) {
-                reject(err);
-                return;
-            }
-            resolve(data);
-        });
-    });
-};
-const getPackageJson = (path) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const packageJsonAsString = yield readFileAsync(path);
-        const packageJson = JSON.parse(packageJsonAsString);
-        if (!packageJson || !(0, package_json_interface_1.isPackageJson)(packageJson)) {
-            throw new Error("Invalid package.json");
-        }
-        return packageJson;
-    }
-    catch (_a) {
-        throw new Error(`${path} is not a valid package.json`);
-    }
-});
-exports.getPackageJson = getPackageJson;
 
 
 /***/ }),

@@ -1,5 +1,12 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm run build:action
+current_dir=$PWD
+
+cd ./core
+npm run build
+
+cd $current_dir
+
+npm run build
 git add dist-action/**

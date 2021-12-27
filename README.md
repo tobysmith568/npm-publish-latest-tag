@@ -1,1 +1,1 @@
-npm-latest-tag-github-action
+# npm Publish Latest Tag GitHub Action
