@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "npm-latest-tag-github-action",
+  "name": "npm-publish-latest-tag",
   "version": "0.0.0",
   "description": "Github Action for getting the correct 'latest' tag value for a npm publish version",
   "keywords": [
@@ -16,9 +16,13 @@
   "main": "./dist/index.js",
   "prettier": "@tobysmith568/prettier-config",
   "scripts": {
-    "build": "del-cli ./dist && ncc build src/index.ts --license third-party-licenses.txt",
+    "build:lib": "del-cli ./dist && tsc",
+    "build:action": "del-cli ./dist-action && ncc build src/action.ts -o dist-action --license third-party-licenses.txt",
     "prepare": "husky install"
   },
+  "files": [
+    "dist"
+  ],
   "author": {
     "name": "Toby Smith",
     "email": "tobysmith568@hotmail.co.uk",

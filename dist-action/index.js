@@ -1555,7 +1555,7 @@ exports.debug = debug; // for test
 
 /***/ }),
 
-/***/ 144:
+/***/ 672:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -1571,7 +1571,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __nccwpck_require__(186);
-const package_json_1 = __nccwpck_require__(559);
+const _1 = __nccwpck_require__(144);
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield runGitHubAction();
@@ -1582,8 +1582,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 const runGitHubAction = () => __awaiter(void 0, void 0, void 0, function* () {
     const packageJsonLocation = core.getInput("package-json");
-    const packageJson = yield (0, package_json_1.getPackageJson)(packageJsonLocation);
-    console.log(packageJson);
+    const latestTag = yield (0, _1.getLatestTag)(packageJsonLocation);
 });
 const handleErrorInGitHubAction = (error) => {
     if (!!(error === null || error === void 0 ? void 0 : error.message)) {
@@ -1599,6 +1598,33 @@ const handleErrorInGitHubAction = (error) => {
 (() => __awaiter(void 0, void 0, void 0, function* () {
     yield main();
 }))();
+
+
+/***/ }),
+
+/***/ 144:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getLatestTag = void 0;
+const package_json_1 = __nccwpck_require__(559);
+const getLatestTag = (packageJsonPath) => __awaiter(void 0, void 0, void 0, function* () {
+    const packageJson = yield (0, package_json_1.getPackageJson)(packageJsonPath);
+    console.log(packageJson);
+    return "TODO";
+});
+exports.getLatestTag = getLatestTag;
 
 
 /***/ }),
@@ -1796,7 +1822,7 @@ module.exports = require("util");
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(144);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(672);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

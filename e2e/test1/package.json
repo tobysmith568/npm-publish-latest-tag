@@ -1,6 +1,6 @@
 {
-  "private": true,
-  "name": "@npm-latest-tag-github-action/test1",
-  "version": "0.0.0",
+  "private": false,
+  "name": "@npm-publish-latest-tag/test-package-1",
+  "version": "1.2.3",
   "description": "Test project 1"
 }
