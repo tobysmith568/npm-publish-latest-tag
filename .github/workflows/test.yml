@@ -78,7 +78,7 @@ jobs:
       - shell: pwsh
         run: 'exit ("${{ steps.subject.outputs.latestTag }}" -eq "latest-1" ? 0 : 1)'
 
-  lower-major-version-than-all:
+  e2e-lower-major-version-than-all:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -89,7 +89,7 @@ jobs:
       - shell: pwsh
         run: 'exit ("${{ steps.subject.outputs.latestTag }}" -eq "latest-0" ? 0 : 1)'
 
-  does-not-exist:
+  e2e-does-not-exist:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -100,7 +100,7 @@ jobs:
       - shell: pwsh
         run: 'exit ("${{ steps.subject.outputs.latestTag }}" -eq "latest" ? 0 : 1)'
 
-  invalid-path:
+  e2e-invalid-path:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

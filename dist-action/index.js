@@ -20,25 +20,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLatestTag = void 0;
-const gt_1 = __importDefault(__nccwpck_require__(4123));
 const major_1 = __importDefault(__nccwpck_require__(6688));
+const prerelease_1 = __importDefault(__nccwpck_require__(4016));
 const npm_package_1 = __nccwpck_require__(724);
 const package_json_1 = __nccwpck_require__(9188);
 const getLatestTag = (packageJsonPath, registryUrl) => __awaiter(void 0, void 0, void 0, function* () {
     const packageJson = yield (0, package_json_1.getPackageJson)(packageJsonPath);
-    const versionToPublish = packageJson.version;
-    const currentPublishedVersion = yield (0, npm_package_1.getLatestVersion)(packageJson.name, registryUrl);
-    if (!currentPublishedVersion) {
+    const localVersion = packageJson.version;
+    const remoteVersion = yield (0, npm_package_1.getLatestVersion)(packageJson.name, registryUrl);
+    if (!remoteVersion) {
         return "latest";
     }
-    const isVersionToPublishGreater = (0, gt_1.default)(versionToPublish, currentPublishedVersion);
-    if (isVersionToPublishGreater) {
-        return "latest";
+    const localMajorVersion = (0, major_1.default)(localVersion);
+    const remoteMajorVersion = (0, major_1.default)(remoteVersion);
+    const localPrerelease = getPrerelease(localVersion);
+    if (!!localPrerelease) {
+        return `latest-${localMajorVersion}-${localPrerelease}`;
     }
-    const versionToPublishMajorVersion = (0, major_1.default)(versionToPublish);
-    return `latest-${versionToPublishMajorVersion}`;
+    if (localMajorVersion < remoteMajorVersion) {
+        return `latest-${localMajorVersion}`;
+    }
+    return "latest";
 });
 exports.getLatestTag = getLatestTag;
+const getPrerelease = (version) => {
+    const prereleaseSections = (0, prerelease_1.default)(version);
+    if (!prereleaseSections || prereleaseSections.length === 0) {
+        return undefined;
+    }
+    return "" + prereleaseSections[0];
+};
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -6023,34 +6034,65 @@ module.exports = SemVer
 
 /***/ }),
 
-/***/ 4309:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const SemVer = __nccwpck_require__(8088)
-const compare = (a, b, loose) =>
-  new SemVer(a, loose).compare(new SemVer(b, loose))
-
-module.exports = compare
-
-
-/***/ }),
-
-/***/ 4123:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const compare = __nccwpck_require__(4309)
-const gt = (a, b, loose) => compare(a, b, loose) > 0
-module.exports = gt
-
-
-/***/ }),
-
 /***/ 6688:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const SemVer = __nccwpck_require__(8088)
 const major = (a, loose) => new SemVer(a, loose).major
 module.exports = major
+
+
+/***/ }),
+
+/***/ 5925:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const {MAX_LENGTH} = __nccwpck_require__(2293)
+const { re, t } = __nccwpck_require__(9523)
+const SemVer = __nccwpck_require__(8088)
+
+const parseOptions = __nccwpck_require__(785)
+const parse = (version, options) => {
+  options = parseOptions(options)
+
+  if (version instanceof SemVer) {
+    return version
+  }
+
+  if (typeof version !== 'string') {
+    return null
+  }
+
+  if (version.length > MAX_LENGTH) {
+    return null
+  }
+
+  const r = options.loose ? re[t.LOOSE] : re[t.FULL]
+  if (!r.test(version)) {
+    return null
+  }
+
+  try {
+    return new SemVer(version, options)
+  } catch (er) {
+    return null
+  }
+}
+
+module.exports = parse
+
+
+/***/ }),
+
+/***/ 4016:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const parse = __nccwpck_require__(5925)
+const prerelease = (version, options) => {
+  const parsed = parse(version, options)
+  return (parsed && parsed.prerelease.length) ? parsed.prerelease : null
+}
+module.exports = prerelease
 
 
 /***/ }),
