@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import { getLatestTag } from "npm-publish-latest-tag";
+import { getNpmRegistryUrl } from "./utils/npm-registry";
 
 const main = async () => {
   try {
@@ -11,8 +12,11 @@ const main = async () => {
 
 const runGitHubAction = async () => {
   const packageJsonLocation = core.getInput("package-json");
+  const registryUrl = await getNpmRegistryUrl();
 
-  const latestTag = await getLatestTag(packageJsonLocation);
+  const latestTag = await getLatestTag(packageJsonLocation, registryUrl);
+
+  core.setOutput("latestTag", latestTag);
 };
 
 const handleErrorInGitHubAction = (error: any) => {

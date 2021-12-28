@@ -15,10 +15,46 @@ jobs:
       - run: npm run build
       - run: npm run test
 
-  e2e-test:
+  e2e-higher-patch-version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ./
+        id: subject
         with:
-          package-json: './e2e/test1/package.json'
+          package-json: './e2e/higher-patch-version/package.json'
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latestTag }}" -eq "latest" ? 0 : 1)'
+
+  e2e-higher-minor-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: './e2e/higher-minor-version/package.json'
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latestTag }}" -eq "latest" ? 0 : 1)'
+
+  e2e-higher-major-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: './e2e/higher-major-version/package.json'
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latestTag }}" -eq "latest" ? 0 : 1)'
+
+  e2e-higher-patch-version-than-v1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: './e2e/higher-patch-version-than-v1/package.json'
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latestTag }}" -eq "latest" ? 0 : 1)'

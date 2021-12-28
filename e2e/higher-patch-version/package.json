@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "name": "@npm-publish-latest-tag/test-package-1",
+  "version": "2.3.5",
+  "description": "Higher patch version than latest tag"
+}
