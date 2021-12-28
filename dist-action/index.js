@@ -94,15 +94,20 @@ const acceptHeader = "application/vnd.npm.install-v1+json; q=1.0, application/js
 const getLatestVersion = (packageName, registryUrl) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const getPath = `${registryUrl}/${packageName}`;
-    const result = yield axios_1.default.get(getPath, {
-        headers: {
-            Accept: acceptHeader
+    try {
+        const result = yield axios_1.default.get(getPath, {
+            headers: {
+                Accept: acceptHeader
+            }
+        });
+        if (result.status !== 200) {
+            return undefined;
         }
-    });
-    if (result.status !== 200) {
+        return (_a = result.data["dist-tags"]) === null || _a === void 0 ? void 0 : _a.latest;
+    }
+    catch (_b) {
         return undefined;
     }
-    return (_a = result.data["dist-tags"]) === null || _a === void 0 ? void 0 : _a.latest;
 });
 exports.getLatestVersion = getLatestVersion;
 //# sourceMappingURL=npm-package.js.map

@@ -14,15 +14,19 @@ export const getLatestVersion = async (
 ): Promise<string | undefined> => {
   const getPath = `${registryUrl}/${packageName}`;
 
-  const result = await axios.get<ResponseModel>(getPath, {
-    headers: {
-      Accept: acceptHeader
-    }
-  });
+  try {
+    const result = await axios.get<ResponseModel>(getPath, {
+      headers: {
+        Accept: acceptHeader
+      }
+    });
 
-  if (result.status !== 200) {
+    if (result.status !== 200) {
+      return undefined;
+    }
+
+    return result.data["dist-tags"]?.latest;
+  } catch {
     return undefined;
   }
-
-  return result.data["dist-tags"]?.latest;
 };
