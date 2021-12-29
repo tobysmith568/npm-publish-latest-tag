@@ -17,8 +17,8 @@
   "prettier": "@tobysmith568/prettier-config",
   "scripts": {
     "build": "del-cli ./dist-action && ncc build src/action.ts -o dist-action --license third-party-licenses.txt",
-    "test": "",
-    "test:ci": "",
+    "test": "jest ./test",
+    "test:ci": "jest --ci --coverage ./test ./core/test",
     "prepare": "husky install"
   },
   "files": [

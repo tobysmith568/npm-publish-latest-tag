@@ -2,8 +2,7 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["**/*.spec.ts"],
-  collectCoverageFrom: ["src/**/*.ts"]
+  testMatch: ["**/*.spec.ts"]
 };
 
 process.env = Object.assign(process.env, {

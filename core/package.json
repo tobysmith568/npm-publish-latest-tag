@@ -17,8 +17,7 @@
   "prettier": "@tobysmith568/prettier-config",
   "scripts": {
     "build": "del-cli ./dist && tsc",
-    "test": "jest ./test",
-    "test:ci": "jest --ci --coverage ./test"
+    "test": "jest ./test"
   },
   "files": [
     "dist"

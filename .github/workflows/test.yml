@@ -12,16 +12,22 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - working-directory: ./core
+      - name: 'npm install core'
+        working-directory: ./core
         run : npm ci
-      - working-directory: ./core
+      - name: 'build core'
+        working-directory: ./core
         run : npm run build
-      - working-directory: ./core
-        run : npm run test:ci
 
       - run: npm ci
       - run: npm run build
       - run: npm run test:ci
+
+      - name: Codecov
+        uses: codecov/codecov-action@v2.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: coverage
 
   e2e-higher-patch-version:
     runs-on: ubuntu-latest
