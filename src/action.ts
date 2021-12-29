@@ -1,4 +1,4 @@
-import * as core from "@actions/core";
+import { getInput, setFailed, setOutput } from "@actions/core";
 import { getLatestTag } from "npm-publish-latest-tag";
 import { getNpmRegistryUrl } from "./utils/npm-registry";
 
@@ -11,26 +11,26 @@ const main = async () => {
 };
 
 const runGitHubAction = async () => {
-  const packageJsonLocation = core.getInput("package-json");
+  const packageJsonLocation = getInput("package-json");
   const registryUrl = await getNpmRegistryUrl();
 
   const latestTag = await getLatestTag(packageJsonLocation, registryUrl);
 
-  core.setOutput("latestTag", latestTag);
+  setOutput("latestTag", latestTag);
 };
 
 const handleErrorInGitHubAction = (error: any) => {
   if (!!error?.message) {
-    core.setFailed(error.message);
+    setFailed(error.message);
     return;
   }
 
   if (typeof error === "string") {
-    core.setFailed(error);
+    setFailed(error);
     return;
   }
 
-  core.setFailed("Action failed with an unknown error");
+  setFailed("Action failed with an unknown error");
 };
 
 (async () => {
