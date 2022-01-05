@@ -35,7 +35,7 @@ Updates to older major versions will get a tag which is specific to that major v
 
 ## Usage
 
-To use this Action, run it and then pass the output to the `npm publish` command.
+To use this Action, run it and then pass the output to the `npm publish` command.  
 Note the use of `id: latest_tag` so that the output can be used.
 
 ### Inputs
