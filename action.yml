@@ -1,6 +1,6 @@
 name: "npm Publish Latest Tag"
 author: "tobysmith568"
-description: "Returns a tag for you to supply to the npm publish command so that updates to old major versions don't automatically get given the 'latest' tag"
+description: "Returns a tag for the npm publish command so updates to old major versions don't automatically get given the 'latest' tag"
 inputs:
   package-json:
     description: "Location of the package.json file relative to the repo root"
