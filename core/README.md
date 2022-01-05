@@ -56,7 +56,7 @@ const tagToPublishWith = await getLatestTag("./package.json");
 
 ## Contributing
 
-This library is not in the top-level directory of its repository; it can be found in the (`./core`)[https://github.com/tobysmith568/npm-publish-latest-tag/tree/main/core] directory.
+This library is not in the top-level directory of its repository; it can be found in the [`./core`](https://github.com/tobysmith568/npm-publish-latest-tag/tree/main/core) directory.
 
 ## License (ISC)
 

@@ -1,6 +1,6 @@
 {
   "name": "npm-publish-latest-tag",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Library for getting a tag value to supply to the npm publish command so that updates to old major versions don't automatically get given the 'latest' tag",
   "keywords": [
     "npm",
