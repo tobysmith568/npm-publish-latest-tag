@@ -24,6 +24,15 @@ This library returns a string for you to supply to the `npm publish` command wit
 
 Updates to older major versions will get a tag which is specific to that major version. Pre-releases/alphas/betas/etc will be tagged as such for their major version, no matter if it's an older, current, or newer major version.
 
+### Examples
+
+| Scenario                                        | Outputted tag value                                                                       | Example where current<br />version is 2.3.4 |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Publishing new major version                    | `latest`                                                                                  | `3.0.0` ➜ `latest`                          |
+| Publishing minor/patch to current major release | `latest`                                                                                  | `2.4.0` ➜ `latest`                          |
+| Publishing minor/patch to old major release     | `latest-X` where `X` is the major version                                                 | `1.4.5` ➜ `latest-1`                        |
+| Publishing pre-release/alpha/beta/etc           | `latest-X-Y` where `X` is the major<br />version and `Y` is the first pre-release section | `3.0.0-beta` ➜ `latest-3-beta`              |
+
 ## Usage
 
 To use this library, import it and run `getLatestTag`, passing in the location of the package.json for the npm package:
@@ -44,15 +53,6 @@ import { getLatestTag } from "npm-publish-latest-tag";
 const tagToPublishWith = await getLatestTag("./package.json");
 //...
 ```
-
-## Results
-
-| Scenario                                        | Result                                                                                    | Example where current<br />version is 2.3.4 |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------- |
-| Publishing new major version                    | `latest`                                                                                  | `3.0.0` ➜ `latest`                          |
-| Publishing minor/patch to current major release | `latest`                                                                                  | `2.4.0` ➜ `latest`                          |
-| Publishing minor/patch to old major release     | `latest-X` where `X` is the major version                                                 | `1.4.5` ➜ `latest-1`                        |
-| Publishing pre-release/alpha/beta/etc           | `latest-X-Y` where `X` is the major<br />version and `Y` is the first pre-release section | `3.0.0-beta` ➜ `latest-3-beta`              |
 
 ## Contributing
 
