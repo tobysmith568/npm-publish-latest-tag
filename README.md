@@ -20,8 +20,18 @@ If you provide no tags to the `npm publish` command then npm automatically gives
 
 This Action returns a string for you to supply to the `npm publish` command so that patches to old major versions don't automatically get given the `latest` tag.
 
+### Inputs
+
+- `package-json`: The path to the package.json file relative to the root of the repository
+
+### Outputs
+
+- `latest-tag`: The value to use for the `--tag` option in `npm publish`
+
+## Usage
+
 To use this Action, run it and then pass the output to the `npm publish` command.  
-Note the use of the `latest_tag` id so that the output can be used.
+Note the use of `id: latest_tag` so that the output can be used.
 
 ```yaml
 
@@ -30,14 +40,30 @@ Note the use of the `latest_tag` id so that the output can be used.
   with:
     package-json: ./package.json
     
-- run: npm publish --access public --tag ${{ steps.latest_tag.outputs.latest-tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
+- run: npm publish --tag ${{ steps.latest_tag.outputs.latest-tag }}
+  env:
+    NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
 ```
 ## Results
+
 | Scenario                                        	| Result                                                                               	| Example where 2.3.4 is current  	|
 |-------------------------------------------------	|--------------------------------------------------------------------------------------	|---------------------------------	|
 | Publishing new major version                    	| `latest`                                                                             	| `3.0.0` ➜ `latest`             	|
 | Publishing minor/patch to current major release 	| `latest`                                                                             	| `2.4.0` ➜ `latest`             	|
 | Publishing minor/patch to old major release     	| `latest-X` where `X` is the major version                                            	| `1.4.5` ➜ `latest-1`           	|
 | Publishing pre-release/alpha/beta/etc           	| `latest-X-Y` where `X` is the major<br />version and `Y` is the first pre-release section 	| `3.0.0-beta` ➜ `latest-3-beta` 	|
+
+## Contributing
+
+This Action is written in TypeScript. Because GitHub Actions need to be in JavaScript, the compilation output for this repository is **not** gitignored and should be committed. When you run `npm install` a pre-commit git-hook will be configured using [`husky`](https://www.npmjs.com/package/husky) which will re-compile the build output, and stage the relevant changes for you.
+
+Any PRs will be rebuilt in a CI process, if that build process creates a different build output to the contents of the PR, then it will fail.
+
+## License (ISC)
+
+Copyright (c) 2021, Toby Smith tobysmith568@hotmail.co.uk
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
