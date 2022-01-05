@@ -2,7 +2,7 @@
   "private": true,
   "name": "npm-publish-latest-tag-github-action",
   "version": "0.0.0",
-  "description": "Github Action for getting the correct 'latest' tag value for a npm publish version",
+  "description": "Github Action for getting a tag value to supply to the npm publish command so that updates to old major versions don't automatically get given the 'latest' tag",
   "keywords": [
     "GitHub",
     "Action",
@@ -13,7 +13,7 @@
     "tag"
   ],
   "license": "ISC",
-  "main": "./dist/index.js",
+  "main": "./dist-action/index.js",
   "prettier": "@tobysmith568/prettier-config",
   "scripts": {
     "build": "del-cli ./dist-action && ncc build src/action.ts -o dist-action --license third-party-licenses.txt",
@@ -22,20 +22,20 @@
     "prepare": "husky install"
   },
   "files": [
-    "dist"
+    "dist-action"
   ],
   "author": {
     "name": "Toby Smith",
     "email": "tobysmith568@hotmail.co.uk",
     "url": "https://tobysmith.uk"
   },
-  "homepage": "https://github.com/tobysmith568/npm-latest-tag-github-action#readme",
+  "homepage": "https://github.com/tobysmith568/npm-publish-latest-tag#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tobysmith568/npm-latest-tag-github-action.git"
+    "url": "git+https://github.com/tobysmith568/npm-publish-latest-tag.git"
   },
   "bugs": {
-    "url": "https://github.com/tobysmith568/npm-latest-tag-github-action/issues"
+    "url": "https://github.com/tobysmith568/npm-publish-latest-tag/issues"
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
