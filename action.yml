@@ -12,3 +12,6 @@ outputs:
 runs:
   using: "node16"
   main: "./dist-action/index.js"
+branding:
+  color: "blue"
+  icon: "tag"
