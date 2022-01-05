@@ -22,7 +22,7 @@ If you provide no tags to the `npm publish` command then npm automatically gives
 
 This Action returns a string for you to supply to the `npm publish` command with the `--tag` flag so that your current major version always keeps the `latest` tag.
 
-Updates to older major versions will get a tag which is specific to that major version. Pre-releases/alphas/betas/etc will be tagged as such for their major version, no matter if it's an older, current, or newer major version.
+Updates to older major versions will get a tag that is specific to that major version. Pre-releases/alphas/betas/etc will be tagged as such for their major version, no matter if it's an older, current, or newer major version.
 
 ### Examples
 
