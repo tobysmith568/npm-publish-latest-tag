@@ -42,7 +42,7 @@
     "@actions/core": "^1.6.0",
     "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.0",
-    "npm-publish-latest-tag": "file:core"
+    "npm-publish-latest-tag": "^1.0.1"
   },
   "devDependencies": {
     "@tobysmith568/prettier-config": "^1.2.0",
