@@ -61,8 +61,6 @@ Note the use of `id: latest_tag` so that the output can be used.
 
 This Action is written in TypeScript. Because GitHub Actions need to be in JavaScript, the compilation output for this repository is **not** gitignored and should be committed. When you run `npm install` a pre-commit git-hook will be configured using [`husky`](https://www.npmjs.com/package/husky) which will re-compile the build output, and stage the relevant changes for you.
 
-Any PRs will be rebuilt in a CI process, if that build process creates a different build output to the contents of the PR, then it will fail.
-
 ## License (ISC)
 
 Copyright (c) 2021, Toby Smith tobysmith568@hotmail.co.uk

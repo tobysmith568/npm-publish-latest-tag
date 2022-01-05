@@ -21,15 +21,6 @@ jobs:
 
       - run: npm ci
       - run: npm run build
-      - shell: pwsh
-        run: |
-          git diff --quiet HEAD -- ./dist-action
-          if (!$?) {
-            echo "dist-action has changed, please commit and push"
-            git diff HEAD -- ./dist-action
-            exit 1
-          }
-
       - run: npm run test:ci
 
       - name: Codecov
