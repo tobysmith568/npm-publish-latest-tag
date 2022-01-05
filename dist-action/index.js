@@ -7852,7 +7852,7 @@ const runGitHubAction = () => __awaiter(void 0, void 0, void 0, function* () {
     const packageJsonLocation = (0, core_1.getInput)("package-json");
     const registryUrl = yield (0, npm_registry_1.getNpmRegistryUrl)();
     const latestTag = yield (0, npm_publish_latest_tag_1.getLatestTag)(packageJsonLocation, registryUrl);
-    (0, core_1.setOutput)("latestTag", latestTag);
+    (0, core_1.setOutput)("latest-tag", latestTag);
 });
 const handleErrorInGitHubAction = (error) => {
     if (!!(error === null || error === void 0 ? void 0 : error.message)) {
