@@ -10,7 +10,8 @@
     "publish",
     "version",
     "latest",
-    "tag"
+    "tag",
+    "semver"
   ],
   "license": "ISC",
   "main": "./dist-action/index.js",

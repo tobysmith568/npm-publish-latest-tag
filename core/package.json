@@ -1,16 +1,14 @@
 {
-  "private": true,
   "name": "npm-publish-latest-tag",
   "version": "0.0.0",
-  "description": "Library for getting the correct 'latest' tag for an npm publish",
+  "description": "Library for getting a tag value to supply to the npm publish command so that updates to old major versions don't automatically get given the 'latest' tag",
   "keywords": [
-    "GitHub",
-    "Action",
     "npm",
     "publish",
     "version",
     "latest",
-    "tag"
+    "tag",
+    "semver"
   ],
   "license": "ISC",
   "main": "./dist/index.js",
@@ -27,13 +25,13 @@
     "email": "tobysmith568@hotmail.co.uk",
     "url": "https://tobysmith.uk"
   },
-  "homepage": "https://github.com/tobysmith568/npm-latest-tag-github-action/blob/main/core/README.md",
+  "homepage": "https://github.com/tobysmith568/npm-publish-latest-tag/blob/main/core/README.md",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tobysmith568/npm-latest-tag-github-action.git"
+    "url": "git+https://github.com/tobysmith568/npm-publish-latest-tag.git"
   },
   "bugs": {
-    "url": "https://github.com/tobysmith568/npm-latest-tag-github-action/issues"
+    "url": "https://github.com/tobysmith568/npm-publish-latest-tag/issues"
   },
   "dependencies": {
     "axios": "^0.24.0",
