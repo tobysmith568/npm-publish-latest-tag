@@ -16,7 +16,7 @@ const runGitHubAction = async () => {
 
   const latestTag = await getLatestTag(packageJsonLocation, registryUrl);
 
-  setOutput("latestTag", latestTag);
+  setOutput("latest-tag", latestTag);
 };
 
 const handleErrorInGitHubAction = (error: any) => {

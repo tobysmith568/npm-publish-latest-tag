@@ -72,7 +72,7 @@ describe("action", () => {
       expect(mockedGetLatestTag).toHaveBeenCalledWith(expect.any(String), npmRegistryUrl);
     });
 
-    it("should set the latestTag output with the result of getLatestTag", async () => {
+    it("should set the latest-tag output with the result of getLatestTag", async () => {
       mockedGetInput.mockReturnValue(packageJsonInput);
       mockedGetNpmRegistryUrl.mockResolvedValue(npmRegistryUrl);
       mockedGetLatestTag.mockResolvedValue("latest");
@@ -84,7 +84,7 @@ describe("action", () => {
       await cycleEventLoop();
 
       expect(mockedSetOutput).toHaveBeenCalledTimes(1);
-      expect(mockedSetOutput).toHaveBeenCalledWith("latestTag", latestTagValue);
+      expect(mockedSetOutput).toHaveBeenCalledWith("latest-tag", latestTagValue);
     });
 
     describe("errors", () => {
