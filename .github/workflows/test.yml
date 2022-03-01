@@ -10,7 +10,7 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       
       - name: 'npm install core'
         working-directory: ./core
@@ -32,7 +32,7 @@ jobs:
   e2e-higher-patch-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         id: subject
         with:
@@ -43,7 +43,7 @@ jobs:
   e2e-higher-minor-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         id: subject
         with:
@@ -54,7 +54,7 @@ jobs:
   e2e-higher-major-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         id: subject
         with:
@@ -65,7 +65,7 @@ jobs:
   e2e-higher-patch-version-than-v1:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         id: subject
         with:
@@ -76,7 +76,7 @@ jobs:
   e2e-higher-minor-version-than-v1:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         id: subject
         with:
@@ -87,7 +87,7 @@ jobs:
   e2e-lower-major-version-than-all:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         id: subject
         with:
@@ -98,7 +98,7 @@ jobs:
   e2e-does-not-exist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         id: subject
         with:
@@ -109,7 +109,7 @@ jobs:
   e2e-invalid-path:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         continue-on-error: true
         id: subject
