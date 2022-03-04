@@ -7,8 +7,16 @@
     <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/tobysmith568/npm-publish-latest-tag?label=GitHub%20Action">
   </a>
 
+  <a href="https://app.fossa.com/projects/custom%2B29651%2Fgithub.com%2Ftobysmith568%2Fnpm-publish-latest-tag?ref=badge_shield">
+    <img alt="FOSSA Status" src="https://app.fossa.com/api/projects/custom%2B29651%2Fgithub.com%2Ftobysmith568%2Fnpm-publish-latest-tag.svg?type=shield"/>
+  </a>
+
   <a href="https://codecov.io/github/tobysmith568/npm-publish-latest-tag">
     <img src="https://codecov.io/github/tobysmith568/npm-publish-latest-tag/branch/main/graph/badge.svg"/>
+  </a>
+
+  <a href="https://bundlephobia.com/package/npm-publish-latest-tag" target="_blank" alt="npm bundle size">
+    <img alt="npm bundle size" src="https://img.shields.io/bundlephobia/min/npm-publish-latest-tag">
   </a>
 </p>
 
@@ -58,10 +66,10 @@ const tagToPublishWith = await getLatestTag("./package.json");
 
 This library is not in the top-level directory of its repository; it can be found in the [`./core`](https://github.com/tobysmith568/npm-publish-latest-tag/tree/main/core) directory.
 
-## License (ISC)
+## License
 
-Copyright (c) 2021, Toby Smith tobysmith568@hotmail.co.uk
+npm-publish-latest-tag and npm-publish-latest-tag-github-action are licensed under the [ISC License](./LICENSE.md).
 
-Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+<a href="https://app.fossa.com/projects/custom%2B29651%2Fgithub.com%2Ftobysmith568%2Fnpm-publish-latest-tag?ref=badge_large">
+  <img alt="FOSSA Status" src="https://app.fossa.com/api/projects/custom%2B29651%2Fgithub.com%2Ftobysmith568%2Fnpm-publish-latest-tag.svg?type=large"/>
+</a>
