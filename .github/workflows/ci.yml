@@ -1,0 +1,205 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "releases/*"
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [12, 14, 16]
+
+    name: Node ${{ matrix.node }} on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies (core)
+        working-directory: ./core
+        run: npm ci
+
+      - name: Build (core)
+        working-directory: ./core
+        run: npm run build
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run Tests
+        run: npm run test:ci
+
+      - name: Codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.node == '16'
+        uses: codecov/codecov-action@v2.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: coverage
+
+      - name: FOSSA
+        uses: fossas/fossa-action@v1.1.0
+        if: matrix.os == 'ubuntu-latest' && matrix.node == '16'
+        with:
+          api-key: ${{ secrets.FOSSA_API_KEY }}
+
+  e2e-higher-patch-version:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [12, 14, 16]
+
+    name: e2e-higher-patch-version using Node ${{ matrix.node }} on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: "./e2e/higher-patch-version/package.json"
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
+
+  e2e-higher-minor-version:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [12, 14, 16]
+
+    name: e2e-higher-minor-version using Node ${{ matrix.node }} on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: "./e2e/higher-minor-version/package.json"
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
+
+  e2e-higher-major-version:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [12, 14, 16]
+
+    name: e2e-higher-major-version using Node ${{ matrix.node }} on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: "./e2e/higher-major-version/package.json"
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
+
+  e2e-higher-patch-version-than-v1:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [12, 14, 16]
+
+    name: e2e-higher-patch-version-than-v1 using Node ${{ matrix.node }} on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: "./e2e/higher-patch-version-than-v1/package.json"
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latest-tag }}" -eq "latest-1" ? 0 : 1)'
+
+  e2e-higher-minor-version-than-v1:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [12, 14, 16]
+
+    name: e2e-higher-minor-version-than-v1 using Node ${{ matrix.node }} on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: "./e2e/higher-minor-version-than-v1/package.json"
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latest-tag }}" -eq "latest-1" ? 0 : 1)'
+
+  e2e-lower-major-version-than-all:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [12, 14, 16]
+
+    name: e2e-lower-major-version-than-all using Node ${{ matrix.node }} on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: "./e2e/lower-major-version-than-all/package.json"
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latest-tag }}" -eq "latest-0" ? 0 : 1)'
+
+  e2e-does-not-exist:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [12, 14, 16]
+
+    name: e2e-does-not-exist using Node ${{ matrix.node }} on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        id: subject
+        with:
+          package-json: "./e2e/does-not-exist/package.json"
+      - shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
+
+  e2e-invalid-path:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [12, 14, 16]
+
+    name: e2e-invalid-path using Node ${{ matrix.node }} on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        continue-on-error: true
+        id: subject
+        with:
+          package-json: "./e2e/package.json-does-not-exist"
+      - if: always()
+        shell: pwsh
+        run: 'exit ("${{ steps.subject.outputs.latest-tag }}" -eq "" ? 0 : 1)'
