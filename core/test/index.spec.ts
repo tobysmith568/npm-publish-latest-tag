@@ -1,7 +1,7 @@
+import { mocked } from "ts-jest/utils";
 import { getLatestTag } from "../src/index";
 import { getLatestVersion } from "../src/utils/npm-package";
 import { getPackageJson } from "../src/utils/package-json";
-import { mocked } from "ts-jest/utils";
 
 jest.mock("../src/utils/package-json");
 jest.mock("../src/utils/npm-package");
