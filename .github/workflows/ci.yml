@@ -20,16 +20,22 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install dependencies (core)
+      - name: Install dependencies for Core
         working-directory: ./core
         run: npm ci
 
-      - name: Build (core)
+      - name: Build Core
         working-directory: ./core
         run: npm run build
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run EsLint
+        run: npx eslint --max-warnings 0 .
+
+      - name: Run Prettier
+        run: npx prettier --check .
 
       - name: Build
         run: npm run build
