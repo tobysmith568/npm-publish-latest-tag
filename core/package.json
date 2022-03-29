@@ -14,7 +14,7 @@
   "main": "./dist/index.js",
   "prettier": "@tobysmith568/prettier-config",
   "scripts": {
-    "build": "del-cli ./dist && tsc",
+    "build": "del-cli ./dist && tsc -p tsconfig.build.json",
     "test": "jest ./test"
   },
   "files": [

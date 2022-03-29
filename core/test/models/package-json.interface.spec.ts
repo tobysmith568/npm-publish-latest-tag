@@ -6,7 +6,7 @@ describe("PackageJson interface", () => {
     version: "1.2.3"
   };
 
-  const falsyStringValues: string[] = [undefined, null];
+  const falsyStringValues: string[] = [undefined, null] as unknown[] as string[];
   const notObjectValues: Record<string, unknown>[] = [
     "",
     "string",

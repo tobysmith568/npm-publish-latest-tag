@@ -6,7 +6,7 @@ jest.mock("fs", () => ({
   readFile: jest.fn()
 }));
 
-type ReadFileCallback = (error: Error | null, data: string) => void;
+type ReadFileCallback = (error: Error | null, data: string | null) => void;
 
 // Needed because the FS readFile types are slightly off
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
