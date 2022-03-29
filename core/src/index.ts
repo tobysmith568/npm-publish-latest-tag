@@ -20,7 +20,7 @@ export const getLatestTag = async (
   const remoteMajorVersion = getMajorVersion(remoteVersion);
 
   const localPrerelease = getPrerelease(localVersion);
-  if (!!localPrerelease) {
+  if (localPrerelease) {
     return `latest-${localMajorVersion}-${localPrerelease}`;
   }
 

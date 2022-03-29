@@ -7864,7 +7864,7 @@ const runGitHubAction = () => __awaiter(void 0, void 0, void 0, function* () {
     (0, core_1.setOutput)("latest-tag", latestTag);
 });
 const handleErrorInGitHubAction = (error) => {
-    if (!!(error === null || error === void 0 ? void 0 : error.message)) {
+    if (error instanceof Error) {
         (0, core_1.setFailed)(error.message);
         return;
     }

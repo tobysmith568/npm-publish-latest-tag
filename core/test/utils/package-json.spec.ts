@@ -6,6 +6,12 @@ jest.mock("fs", () => ({
   readFile: jest.fn()
 }));
 
+type ReadFileCallback = (error: Error | null, data: string) => void;
+
+// Needed because the FS readFile types are slightly off
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FsReadFile = any;
+
 describe("package.json utils", () => {
   const pathToPackageJson = "path/to/package.json";
   const mockedReadFile = mocked(readFile);
@@ -13,11 +19,15 @@ describe("package.json utils", () => {
   beforeEach(() => {
     jest.resetAllMocks();
 
-    const mockImplementation: any = (path: string, encoding: string, callback: Function) => {
+    const mockReadFileImplementation: FsReadFile = (
+      path: string,
+      encoding: string,
+      callback: ReadFileCallback
+    ) => {
       callback(null, '{ "name": "test-package", "version": "1.2.3" }');
     };
 
-    mockedReadFile.mockImplementation(mockImplementation);
+    mockedReadFile.mockImplementation(mockReadFileImplementation);
   });
 
   afterAll(() => {
@@ -48,10 +58,14 @@ describe("package.json utils", () => {
     it("should throw if fs readFile calls the callback with an error", async () => {
       const error = new Error("fs readFile error");
 
-      const mockImplementation: any = (path: string, encoding: string, callback: Function) => {
+      const mockReadFileImplementation: FsReadFile = (
+        path: string,
+        encoding: string,
+        callback: ReadFileCallback
+      ) => {
         callback(error, null);
       };
-      mockedReadFile.mockImplementation(mockImplementation);
+      mockedReadFile.mockImplementation(mockReadFileImplementation);
 
       expect(getPackageJson(pathToPackageJson)).rejects.toThrowError(
         "path/to/package.json is not a valid package.json"
@@ -59,10 +73,14 @@ describe("package.json utils", () => {
     });
 
     it("should throw if the package.json isn't valid json", async () => {
-      const mockImplementation: any = (path: string, encoding: string, callback: Function) => {
+      const mockReadFileImplementation: FsReadFile = (
+        path: string,
+        encoding: string,
+        callback: ReadFileCallback
+      ) => {
         callback(null, "This is not valid json");
       };
-      mockedReadFile.mockImplementation(mockImplementation);
+      mockedReadFile.mockImplementation(mockReadFileImplementation);
 
       expect(getPackageJson(pathToPackageJson)).rejects.toThrowError(
         "path/to/package.json is not a valid package.json"
@@ -70,10 +88,14 @@ describe("package.json utils", () => {
     });
 
     it("should throw if the package.json doesn't have a name key", async () => {
-      const mockImplementation: any = (path: string, encoding: string, callback: Function) => {
+      const mockReadFileImplementation: FsReadFile = (
+        path: string,
+        encoding: string,
+        callback: ReadFileCallback
+      ) => {
         callback(null, '{ "version": "1.2.3" }');
       };
-      mockedReadFile.mockImplementation(mockImplementation);
+      mockedReadFile.mockImplementation(mockReadFileImplementation);
 
       expect(getPackageJson(pathToPackageJson)).rejects.toThrowError(
         "path/to/package.json is not a valid package.json"
@@ -81,10 +103,14 @@ describe("package.json utils", () => {
     });
 
     it("should throw if the package.json doesn't have a version key", async () => {
-      const mockImplementation: any = (path: string, encoding: string, callback: Function) => {
+      const mockReadFileImplementation: FsReadFile = (
+        path: string,
+        encoding: string,
+        callback: ReadFileCallback
+      ) => {
         callback(null, '{ "name": "test-package" }');
       };
-      mockedReadFile.mockImplementation(mockImplementation);
+      mockedReadFile.mockImplementation(mockReadFileImplementation);
 
       expect(getPackageJson(pathToPackageJson)).rejects.toThrowError(
         "path/to/package.json is not a valid package.json"

@@ -5,7 +5,7 @@ import { getNpmRegistryUrl } from "./utils/npm-registry";
 const main = async () => {
   try {
     await runGitHubAction();
-  } catch (error: any) {
+  } catch (error: unknown) {
     handleErrorInGitHubAction(error);
   }
 };
@@ -19,8 +19,8 @@ const runGitHubAction = async () => {
   setOutput("latest-tag", latestTag);
 };
 
-const handleErrorInGitHubAction = (error: any) => {
-  if (!!error?.message) {
+const handleErrorInGitHubAction = (error: unknown) => {
+  if (error instanceof Error) {
     setFailed(error.message);
     return;
   }

@@ -4,7 +4,7 @@ import { isPackageJson, PackageJson } from "../models/package-json.interface";
 const readFileAsync = (path: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     readFile(path, "utf-8", (err, data) => {
-      if (!!err) {
+      if (err) {
         reject(err);
         return;
       }

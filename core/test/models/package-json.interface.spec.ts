@@ -6,9 +6,26 @@ describe("PackageJson interface", () => {
     version: "1.2.3"
   };
 
-  const falsyValues = [undefined, null, 0];
-  const notObjectValues = ["", "string", true, false, 1, [], () => undefined, Symbol()];
-  const notStringValues = [true, false, 1, [], {}, () => undefined, Symbol()];
+  const falsyStringValues: string[] = [undefined, null];
+  const notObjectValues: Record<string, unknown>[] = [
+    "",
+    "string",
+    true,
+    false,
+    1,
+    [],
+    () => undefined,
+    Symbol()
+  ] as unknown[] as Record<string, unknown>[];
+  const notStringValues: string[] = [
+    true,
+    false,
+    1,
+    [],
+    {},
+    () => undefined,
+    Symbol()
+  ] as unknown[] as string[];
 
   describe("isPackageJson", () => {
     it("should return true for valid package.json", () => {
@@ -17,7 +34,7 @@ describe("PackageJson interface", () => {
       expect(result).toBe(true);
     });
 
-    falsyValues.forEach(subject =>
+    falsyStringValues.forEach(subject =>
       it(`should return false if the subject is falsy (${subject})`, () => {
         const result = isPackageJson(subject);
 
@@ -34,9 +51,9 @@ describe("PackageJson interface", () => {
     );
 
     describe("name", () => {
-      falsyValues.forEach(falsyName =>
+      falsyStringValues.forEach(falsyName =>
         it(`should return false if the subject name is false (${falsyName})`, () => {
-          const subjectWithFalsyName = validPackageJson as any;
+          const subjectWithFalsyName = validPackageJson;
           subjectWithFalsyName.name = falsyName;
 
           const result = isPackageJson(subjectWithFalsyName);
@@ -49,7 +66,7 @@ describe("PackageJson interface", () => {
         it(`should return false if the subject name is not a string (${JSON.stringify(
           notStringName
         )})`, () => {
-          const subjectWithNotStringName = validPackageJson as any;
+          const subjectWithNotStringName = validPackageJson;
           subjectWithNotStringName.name = notStringName;
 
           const result = isPackageJson(subjectWithNotStringName);
@@ -60,9 +77,9 @@ describe("PackageJson interface", () => {
     });
 
     describe("version", () => {
-      falsyValues.forEach(falsyVersion =>
+      falsyStringValues.forEach(falsyVersion =>
         it(`should return false if the subject version is false (${falsyVersion})`, () => {
-          const subjectWithFalsyVersion = validPackageJson as any;
+          const subjectWithFalsyVersion = validPackageJson;
           subjectWithFalsyVersion.version = falsyVersion;
 
           const result = isPackageJson(subjectWithFalsyVersion);
@@ -75,7 +92,7 @@ describe("PackageJson interface", () => {
         it(`should return false if the subject version is not a string (${JSON.stringify(
           notStringVersion
         )})`, () => {
-          const subjectWithNotStringVersion = validPackageJson as any;
+          const subjectWithNotStringVersion = validPackageJson;
           subjectWithNotStringVersion.version = notStringVersion;
 
           const result = isPackageJson(subjectWithNotStringVersion);

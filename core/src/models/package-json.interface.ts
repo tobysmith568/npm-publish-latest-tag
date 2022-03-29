@@ -3,7 +3,7 @@ export interface PackageJson {
   version: string;
 }
 
-export const isPackageJson = (subject: any): subject is PackageJson => {
+export const isPackageJson = (subject: unknown): subject is PackageJson => {
   if (!subject) {
     return false;
   }
@@ -12,11 +12,13 @@ export const isPackageJson = (subject: any): subject is PackageJson => {
     return false;
   }
 
-  if (!subject.name || typeof subject.name !== "string") {
+  const subjectAsPackageJson = subject as PackageJson;
+
+  if (!subjectAsPackageJson.name || typeof subjectAsPackageJson.name !== "string") {
     return false;
   }
 
-  if (!subject.version || typeof subject.version !== "string") {
+  if (!subjectAsPackageJson.version || typeof subjectAsPackageJson.version !== "string") {
     return false;
   }
 
