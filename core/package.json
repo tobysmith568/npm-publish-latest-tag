@@ -34,7 +34,7 @@
     "url": "https://github.com/tobysmith568/npm-publish-latest-tag/issues"
   },
   "dependencies": {
-    "axios": "^0.26.0",
+    "axios": "^0.27.0",
     "semver": "^7.3.5"
   },
   "devDependencies": {
