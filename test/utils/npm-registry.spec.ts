@@ -1,11 +1,10 @@
 import { ExecOutput, getExecOutput } from "@actions/exec";
-import { mocked } from "ts-jest/utils";
 import { getNpmRegistryUrl } from "../../src/utils/npm-registry";
 
 jest.mock("@actions/exec");
 
 describe("npm registry utils", () => {
-  const mockGetExecOutput = mocked(getExecOutput);
+  const mockGetExecOutput = jest.mocked(getExecOutput);
 
   describe("getNpmRegistryUrl", () => {
     it("should call getExecOutput with the npm executable", async () => {

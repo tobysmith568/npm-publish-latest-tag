@@ -1,4 +1,3 @@
-import { mocked } from "ts-jest/utils";
 import { getLatestTag } from "../src/index";
 import { getLatestVersion } from "../src/utils/npm-package";
 import { getPackageJson } from "../src/utils/package-json";
@@ -7,8 +6,8 @@ jest.mock("../src/utils/package-json");
 jest.mock("../src/utils/npm-package");
 
 describe("index", () => {
-  const mockedGetPackageJson = mocked(getPackageJson);
-  const mockedGetLatestVersion = mocked(getLatestVersion);
+  const mockedGetPackageJson = jest.mocked(getPackageJson);
+  const mockedGetLatestVersion = jest.mocked(getLatestVersion);
 
   const packageJsonPath = "./package.json";
   const registryUrl = "https://registry.npmjs.org";
