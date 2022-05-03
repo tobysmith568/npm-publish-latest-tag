@@ -1,6 +1,5 @@
 import { getInput, setFailed, setOutput } from "@actions/core";
 import { getLatestTag } from "npm-publish-latest-tag";
-import { mocked } from "ts-jest/utils";
 import { getNpmRegistryUrl } from "../src/utils/npm-registry";
 
 jest.mock("@actions/core");
@@ -8,11 +7,11 @@ jest.mock("npm-publish-latest-tag");
 jest.mock("../src/utils/npm-registry");
 
 describe("action", () => {
-  const mockedGetInput = mocked(getInput);
-  const mockedSetOutput = mocked(setOutput);
-  const mockedSetFailed = mocked(setFailed);
-  const mockedGetNpmRegistryUrl = mocked(getNpmRegistryUrl);
-  const mockedGetLatestTag = mocked(getLatestTag);
+  const mockedGetInput = jest.mocked(getInput);
+  const mockedSetOutput = jest.mocked(setOutput);
+  const mockedSetFailed = jest.mocked(setFailed);
+  const mockedGetNpmRegistryUrl = jest.mocked(getNpmRegistryUrl);
+  const mockedGetLatestTag = jest.mocked(getLatestTag);
 
   const packageJsonInput = "./package.json";
   const npmRegistryUrl = "https://the.registry.url.com";

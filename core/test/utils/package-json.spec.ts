@@ -1,5 +1,4 @@
 import { readFile } from "fs";
-import { mocked } from "ts-jest/utils";
 import { getPackageJson } from "../../src/utils/package-json";
 
 jest.mock("fs", () => ({
@@ -14,7 +13,7 @@ type FsReadFile = any;
 
 describe("package.json utils", () => {
   const pathToPackageJson = "path/to/package.json";
-  const mockedReadFile = mocked(readFile);
+  const mockedReadFile = jest.mocked(readFile);
 
   beforeEach(() => {
     jest.resetAllMocks();

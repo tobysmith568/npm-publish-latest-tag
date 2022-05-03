@@ -1,5 +1,4 @@
 import axios from "axios";
-import { mocked } from "ts-jest/utils";
 import { getLatestVersion } from "../../src/utils/npm-package";
 
 jest.mock("axios");
@@ -8,7 +7,7 @@ describe("npm package utils", () => {
   const packageName = "package-name";
   const registryUrl = "https://registry.url.com";
 
-  const mockedAxiosGet = mocked(axios.get);
+  const mockedAxiosGet = jest.mocked(axios.get);
 
   describe("getLatestVersion", () => {
     it("should call axios get with the registry url and package name", async () => {
