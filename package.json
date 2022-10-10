@@ -39,7 +39,7 @@
     "url": "https://github.com/tobysmith568/npm-publish-latest-tag/issues"
   },
   "dependencies": {
-    "@actions/core": "^1.6.0",
+    "@actions/core": "^1.9.1",
     "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.0",
     "npm-publish-latest-tag": "^1.0.1"
