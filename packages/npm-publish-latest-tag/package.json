@@ -1,0 +1,28 @@
+{
+  "name": "npm-publish-latest-tag",
+  "version": "1.0.1",
+  "description": "Library for getting a tag value to supply to the npm publish command so that updates to old major versions don't automatically get given the 'latest' tag",
+  "keywords": [
+    "npm",
+    "publish",
+    "version",
+    "latest",
+    "tag",
+    "semver"
+  ],
+  "license": "ISC",
+  "type": "commonjs",
+  "author": {
+    "name": "Toby Smith",
+    "email": "tobysmith568@hotmail.co.uk",
+    "url": "https://tobysmith.uk"
+  },
+  "homepage": "https://github.com/tobysmith568/npm-publish-latest-tag/blob/main/core/README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobysmith568/npm-publish-latest-tag.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tobysmith568/npm-publish-latest-tag/issues"
+  }
+}

@@ -20,7 +20,7 @@
 
 A Github Action for getting a tag value to supply to the `npm publish` command so that updates to old major versions don't automatically get given the `latest` tag.
 
-> If you're looking for the npm package & CLI, you want this Readme: [./core/README.md](./core/README.md).
+> If you're looking for the npm package & CLI, you want this Readme: [./packages/npm-publish-latest-tag/README.md](./packages/npm-publish-latest-tag/README.md).
 
 ### Why use this?
 

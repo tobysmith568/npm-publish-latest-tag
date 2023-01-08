@@ -1,62 +1,51 @@
 {
   "private": true,
-  "name": "npm-publish-latest-tag-github-action",
+  "name": "root",
   "version": "0.0.0",
-  "description": "Github Action for getting a tag value to supply to the npm publish command so that updates to old major versions don't automatically get given the 'latest' tag",
-  "keywords": [
-    "GitHub",
-    "Action",
-    "npm",
-    "publish",
-    "version",
-    "latest",
-    "tag",
-    "semver"
-  ],
   "license": "ISC",
-  "main": "./dist-action/index.js",
-  "prettier": "@tobysmith568/prettier-config",
   "scripts": {
-    "build": "del-cli ./dist-action && ncc build src/action.ts -o dist-action --license third-party-licenses.txt",
-    "test": "jest ./test",
-    "test:ci": "jest --ci --coverage ./test ./core/test",
+    "build": "set NX_DAEMON=false&& npx nx run-many --target build",
+    "test": "set NX_DAEMON=false&& npx nx run-many --target test",
     "prepare": "husky install"
   },
-  "files": [
-    "dist-action"
-  ],
-  "author": {
-    "name": "Toby Smith",
-    "email": "tobysmith568@hotmail.co.uk",
-    "url": "https://tobysmith.uk"
-  },
-  "homepage": "https://github.com/tobysmith568/npm-publish-latest-tag#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tobysmith568/npm-publish-latest-tag.git"
-  },
-  "bugs": {
-    "url": "https://github.com/tobysmith568/npm-publish-latest-tag/issues"
-  },
+  "prettier": "@tobysmith568/prettier-config",
   "dependencies": {
-    "@actions/core": "^1.9.1",
-    "@actions/exec": "^1.1.0",
-    "@actions/github": "^5.0.0",
-    "npm-publish-latest-tag": "^1.0.1"
+    "@actions/core": "^1.10.0",
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^5.1.1",
+    "@swc/helpers": "~0.4.11",
+    "axios": "^1.2.2",
+    "semver": "^7.3.8",
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@nrwl/eslint-plugin-nx": "15.4.5",
+    "@nrwl/jest": "15.4.5",
+    "@nrwl/js": "15.4.5",
+    "@nrwl/linter": "15.4.5",
+    "@nrwl/node": "^15.4.5",
+    "@nrwl/webpack": "15.4.5",
+    "@nrwl/workspace": "15.4.5",
+    "@swc/cli": "~0.1.55",
+    "@swc/core": "^1.2.173",
+    "@swc/jest": "0.2.20",
+    "@tobysmith568/eslint-config": "^1.0.2",
     "@tobysmith568/prettier-config": "^2.0.0",
-    "@types/jest": "^29.0.0",
-    "@types/node": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.17.0",
-    "@typescript-eslint/parser": "^5.17.0",
-    "@vercel/ncc": "^0.36.0",
-    "del-cli": "^5.0.0",
-    "eslint": "^8.12.0",
-    "eslint-config-prettier": "^8.5.0",
-    "husky": "^8.0.0",
-    "jest": "^29.0.0",
-    "ts-jest": "^29.0.0",
-    "typescript": "^4.5.4"
+    "@types/jest": "28.1.1",
+    "@types/node": "18.7.1",
+    "@types/semver": "^7.3.13",
+    "@typescript-eslint/eslint-plugin": "^5.36.1",
+    "@typescript-eslint/parser": "^5.36.1",
+    "cspell": "^6.18.1",
+    "eslint": "~8.15.0",
+    "eslint-config-prettier": "8.1.0",
+    "husky": "^8.0.3",
+    "jest": "28.1.1",
+    "jest-environment-jsdom": "28.1.1",
+    "nx": "15.4.5",
+    "prettier": "^2.6.2",
+    "ts-jest": "28.0.5",
+    "ts-node": "10.9.1",
+    "typescript": "~4.8.2"
   }
 }

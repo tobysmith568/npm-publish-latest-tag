@@ -11,7 +11,7 @@ outputs:
     description: "The value of the 'latest' tag to use when publishing"
 runs:
   using: "node16"
-  main: "./dist-action/index.js"
+  main: "./dist/packages/github-action/main.js"
 branding:
   color: "blue"
   icon: "tag"

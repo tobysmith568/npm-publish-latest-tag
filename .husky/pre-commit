@@ -1,12 +1,5 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-current_dir=$PWD
-
-cd ./core
-npm run build
-
-cd $current_dir
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
 
 npm run build
-git add dist-action/**
+git add dist/packages/github-action/**
