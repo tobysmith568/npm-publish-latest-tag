@@ -41,7 +41,7 @@
   "dependencies": {
     "@actions/core": "^1.9.1",
     "@actions/exec": "^1.1.0",
-    "@actions/github": "^5.0.0",
+    "@actions/github": "^6.0.0",
     "npm-publish-latest-tag": "^1.0.1"
   },
   "devDependencies": {
