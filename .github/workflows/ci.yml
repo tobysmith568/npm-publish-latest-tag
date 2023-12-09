@@ -10,61 +10,81 @@ on:
       - renovate/*
 
 jobs:
-  ci:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-        node:
-          - 14
-          - 16
-          - 18
+  lint:
+    name: Lint
 
-    name: Node ${{ matrix.node }} on ${{ matrix.os }}
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
-      - name: Install dependencies for Core
-        working-directory: ./core
-        run: npm ci
-
-      - name: Build Core
-        working-directory: ./core
-        run: npm run build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run EsLint
-        run: npx eslint --max-warnings 0 .
+        run: npx nx run-many --target lint
 
       - name: Run Prettier
         run: npx prettier --check .
 
+  build:
+    name: Build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Build
-        run: npm run build
+        run: npx nx run-many --target build --configuration production
+
+      - name: Upload build
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: dist
+          retention-days: 1
+
+  test:
+    name: Test
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run Tests
-        run: npm run test:ci
+        run: npx nx run-many --target test --configuration ci
 
       - name: Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.node == '16'
         uses: codecov/codecov-action@v3.1.4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: coverage
-
-      - name: FOSSA
-        uses: fossas/fossa-action@v1.3.1
-        if: matrix.os == 'ubuntu-latest' && matrix.node == '16'
-        with:
-          api-key: ${{ secrets.FOSSA_API_KEY }}
 
   e2e:
     strategy:
@@ -74,9 +94,9 @@ jobs:
           - macos-latest
           - windows-latest
         node:
-          - 14
-          - 16
           - 18
+          - 20
+          - 21
         test:
           - name: higher-patch-version
             result: latest
