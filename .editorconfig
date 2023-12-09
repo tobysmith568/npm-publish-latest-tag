@@ -13,3 +13,6 @@ max_line_length = off
 
 [*.md]
 trim_trailing_whitespace = false
+
+[*.cs]
+indent_size = 4
