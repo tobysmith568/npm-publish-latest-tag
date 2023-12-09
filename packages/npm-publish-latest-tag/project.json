@@ -14,9 +14,23 @@
         "assets": ["LICENSE.md", "packages/npm-publish-latest-tag/*.md"]
       }
     },
+    "version": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/version.mjs npm-publish-latest-tag {args.version}"
+      }
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/pack.mjs npm-publish-latest-tag"
+      }
+    },
     "publish": {
-      "command": "node tools/scripts/publish.mjs npm-publish-latest-tag {args.ver} {args.tag}",
-      "dependsOn": ["build"]
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/publish.mjs npm-publish-latest-tag {args.tag}"
+      }
     },
     "lint": {
       "executor": "@nx/eslint:lint",

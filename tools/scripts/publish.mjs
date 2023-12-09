@@ -1,6 +1,8 @@
 import devkit from "@nx/devkit";
 import chalk from "chalk";
 import { execSync } from "child_process";
+import { join } from "path";
+import { getLatestTag } from "../../dist/packages/npm-publish-latest-tag";
 
 const { createProjectGraphAsync, readCachedProjectGraph } = devkit;
 
@@ -11,7 +13,7 @@ function invariant(condition, message) {
   }
 }
 
-const [, , name, tag = "next"] = process.argv;
+const [, , name] = process.argv;
 
 await createProjectGraphAsync();
 const graph = readCachedProjectGraph();
@@ -22,12 +24,10 @@ invariant(
   `Could not find project "${name}" in the workspace. Is the project.json configured correctly?`
 );
 
-const outputPath = project.data?.targets?.build?.options?.outputPath;
-invariant(
-  outputPath,
-  `Could not find "build.options.outputPath" of project "${name}". Is project.json configured correctly?`
-);
+const outputDir = join(devkit.workspaceRoot, "dist", project.data.root);
 
-process.chdir(outputPath);
+process.chdir(outputDir);
 
-execSync(`npm publish --access public --provenance --tag ${tag}`);
+const tag = await getLatestTag("./package.json");
+
+execSync(`npm publish --access public --tag ${tag} --provenance`);

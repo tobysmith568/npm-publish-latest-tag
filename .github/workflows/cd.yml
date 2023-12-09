@@ -1,0 +1,103 @@
+﻿name: CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: A SemVer for the release
+        default: ""
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: pwsh
+
+env:
+  NODE_VERSION: 21
+
+jobs:
+  ci:
+    name: Run CI
+    uses: ./.github/workflows/ci.yml
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish:
+    name: Publish to npm
+
+    needs:
+      - ci
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download Build
+        uses: actions/download-artifact@v3
+        with:
+          name: Build
+          path: ./dist
+
+      - name: Publish
+        run: npx nx run-many --target publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release:
+    name: Create GitHub Release
+
+    needs:
+      - publish
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ inputs.version }}
+          generate_release_notes: true
+          body: |
+            # Release v${{ inputs.version }}
+
+            Download from [npm](https://www.npmjs.com/package/npm-publish-latest-tag/v/${{ inputs.version }}): `npm install npm-publish-latest-tag@${{ inputs.version }} --save-dev`
+
+      - name: Calculate minor version
+        id: minor
+        run: |
+          $version = "${{ inputs.version }}".Split(".") | Select -First 2 | Join-String -Separator "."
+          echo "minorOnlyVersion=$version" >> $GITHUB_STATE
+
+      - name: Calculate major version
+        id: major
+        run: |
+          $version = "${{ inputs.version }}".Split(".") | Select -First 1
+          echo "majorOnlyVersion=$version" >> $GITHUB_STATE
+
+      - name: Tag Commit
+        run: |
+          git tag "v${{ inputs.version }}"
+          git tag "v${{ steps.minor.outputs.minorOnlyVersion }}"
+          git tag "v${{ steps.major.outputs.majorOnlyVersion }}"
+          git push --tags --force

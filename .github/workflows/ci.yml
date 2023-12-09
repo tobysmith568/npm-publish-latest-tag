@@ -8,6 +8,20 @@ on:
     branches:
       - main
       - renovate/*
+  workflow_call:
+    inputs:
+      version:
+        description: The version to set in the package.json files
+        default: "0.0.0"
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: pwsh
+
+env:
+  NODE_VERSION: 21
 
 jobs:
   lint:
@@ -21,7 +35,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
       - name: Install dependencies
@@ -44,7 +58,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
       - name: Install dependencies
@@ -52,6 +66,13 @@ jobs:
 
       - name: Build
         run: npx nx run-many --target build --configuration production
+
+      - name: Log Version
+        run: Write-Host ${{ inputs.version }}
+
+      - name: Set Version
+        if: inputs.version != ''
+        run: npx nx run-many --target version --args="--version=${{ inputs.version }}"
 
       - name: Upload build
         uses: actions/upload-artifact@v3
@@ -71,7 +92,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
       - name: Install dependencies

@@ -10,7 +10,7 @@ outputs:
   latest-tag:
     description: "The value of the 'latest' tag to use when publishing"
 runs:
-  using: "node16"
+  using: "node20"
   main: "./github-action-build/action.cjs"
 branding:
   color: "blue"
