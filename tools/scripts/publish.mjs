@@ -2,7 +2,7 @@ import devkit from "@nx/devkit";
 import chalk from "chalk";
 import { execSync } from "child_process";
 import { join } from "path";
-import { getLatestTag } from "../../dist/packages/npm-publish-latest-tag";
+import { getLatestTag } from "../../dist/packages/npm-publish-latest-tag/src/index.js";
 
 const { createProjectGraphAsync, readCachedProjectGraph } = devkit;
 
