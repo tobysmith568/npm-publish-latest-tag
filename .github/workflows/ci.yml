@@ -118,37 +118,90 @@ jobs:
           - 18
           - 20
           - 21
-        test:
-          - name: higher-patch-version
-            result: latest
-          - name: higher-minor-version
-            result: latest
-          - name: higher-major-version
-            result: latest
-          - name: higher-patch-version-than-v1
-            result: latest-1
-          - name: higher-minor-version-than-v1
-            result: latest-1
-          - name: lower-major-version-than-all
-            result: latest-0
-          - name: does-not-exist
-            result: latest
-          - name: invalid-path
-            result: ""
 
-    name: e2e-${{ matrix.test.name }} using Node ${{ matrix.node }} on ${{ matrix.os }}
+    name: E2E using Node.JS ${{ matrix.node }} on ${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
-      - uses: ./
+      - if: always()
+        uses: ./
         continue-on-error: true
-        id: subject
+        id: higher-patch-version
         with:
-          package-json: "./e2e/${{ matrix.test.name }}/package.json"
-
+          package-json: "./e2e/higher-patch-version/package.json"
       - if: always()
         shell: pwsh
-        run: 'exit ("${{ steps.subject.outputs.latest-tag }}" -eq "${{ matrix.test.result }}" ? 0 : 1)'
+        run: 'exit ("${{ steps.higher-patch-version.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
+
+      - if: always()
+        uses: ./
+        continue-on-error: true
+        id: higher-minor-version
+        with:
+          package-json: "./e2e/higher-minor-version/package.json"
+      - if: always()
+        shell: pwsh
+        run: 'exit ("${{ steps.higher-minor-version.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
+
+      - if: always()
+        uses: ./
+        continue-on-error: true
+        id: higher-major-version
+        with:
+          package-json: "./e2e/higher-major-version/package.json"
+      - if: always()
+        shell: pwsh
+        run: 'exit ("${{ steps.higher-major-version.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
+
+      - if: always()
+        uses: ./
+        continue-on-error: true
+        id: higher-patch-version-than-v1
+        with:
+          package-json: "./e2e/higher-patch-version-than-v1/package.json"
+      - if: always()
+        shell: pwsh
+        run: 'exit ("${{ steps.higher-patch-version-than-v1.outputs.latest-tag }}" -eq "latest-1" ? 0 : 1)'
+
+      - if: always()
+        uses: ./
+        continue-on-error: true
+        id: higher-minor-version-than-v1
+        with:
+          package-json: "./e2e/higher-minor-version-than-v1/package.json"
+      - if: always()
+        shell: pwsh
+        run: 'exit ("${{ steps.higher-minor-version-than-v1.outputs.latest-tag }}" -eq "latest-1" ? 0 : 1)'
+
+      - if: always()
+        uses: ./
+        continue-on-error: true
+        id: lower-major-version-than-all
+        with:
+          package-json: "./e2e/lower-major-version-than-all/package.json"
+      - if: always()
+        shell: pwsh
+        run: 'exit ("${{ steps.lower-major-version-than-all.outputs.latest-tag }}" -eq "latest-0" ? 0 : 1)'
+
+      - if: always()
+        uses: ./
+        continue-on-error: true
+        id: does-not-exist
+        with:
+          package-json: "./e2e/does-not-exist/package.json"
+      - if: always()
+        shell: pwsh
+        run: 'exit ("${{ steps.does-not-exist.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
+
+      - if: always()
+        uses: ./
+        continue-on-error: true
+        id: invalid-path
+        with:
+          package-json: "./e2e/invalid-path/package.json"
+      - if: always()
+        shell: pwsh
+        run: 'exit ("${{ steps.invalid-path.outputs.latest-tag }}" -eq "" ? 0 : 1)'
