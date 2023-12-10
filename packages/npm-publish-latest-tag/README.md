@@ -3,7 +3,7 @@
     <img alt="npm" src="https://img.shields.io/npm/v/npm-publish-latest-tag?logo=npm">
   </a>
 
-  <a href="https://github/tobysmith568/npm-publish-latest-tag/releases">
+  <a href="https://github.com/tobysmith568/npm-publish-latest-tag/releases">
     <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/tobysmith568/npm-publish-latest-tag?label=GitHub%20Action">
   </a>
 
