@@ -87,13 +87,13 @@ jobs:
         id: minor
         run: |
           $version = "${{ inputs.version }}".Split(".") | Select -First 2 | Join-String -Separator "."
-          echo "minorOnlyVersion=$version" >> $GITHUB_STATE
+          echo "minorOnlyVersion=$version" >> $GITHUB_OUTPUT
 
       - name: Calculate major version
         id: major
         run: |
           $version = "${{ inputs.version }}".Split(".") | Select -First 1
-          echo "majorOnlyVersion=$version" >> $GITHUB_STATE
+          echo "majorOnlyVersion=$version" >> $GITHUB_OUTPUT
 
       - name: Tag Commit
         run: |
