@@ -9,7 +9,7 @@
   "prettier": "@tobysmith568/prettier-config",
   "dependencies": {
     "@actions/core": "^3.0.0",
-    "@actions/exec": "^2.0.0",
+    "@actions/exec": "^3.0.0",
     "@swc/helpers": "~0.5.2",
     "axios": "^1.6.2",
     "semver": "^7.5.4",
