@@ -14,7 +14,7 @@ defaults:
     shell: pwsh
 
 env:
-  NODE_VERSION: 21
+  NODE_VERSION: 24
 
 jobs:
   ci:
@@ -56,8 +56,6 @@ jobs:
 
       - name: Publish
         run: npx nx run-many --target publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release:
     name: Create GitHub Release
