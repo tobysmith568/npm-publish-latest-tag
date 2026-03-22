@@ -21,7 +21,7 @@ defaults:
     shell: pwsh
 
 env:
-  NODE_VERSION: 21
+  NODE_VERSION: 24
 
 jobs:
   lint:
@@ -115,9 +115,9 @@ jobs:
           - macos-latest
           - windows-latest
         node:
-          - 18
-          - 20
-          - 21
+          - 22
+          - 24
+          - 25
 
     name: E2E using Node.JS ${{ matrix.node }} on ${{ matrix.os }}
 
