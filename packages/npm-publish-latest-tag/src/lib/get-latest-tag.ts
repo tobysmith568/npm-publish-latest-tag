@@ -3,9 +3,11 @@ import semverPrerelease from "semver/functions/prerelease";
 import { getLatestVersion } from "./utils/npm-package";
 import { getPackageJson } from "./utils/package-json";
 
+const defaultRegistryUrl = "https://registry.npmjs.org";
+
 export const getLatestTag = async (
   packageJsonPath: string,
-  registryUrl: string
+  registryUrl: string = defaultRegistryUrl
 ): Promise<string> => {
   const packageJson = await getPackageJson(packageJsonPath);
 
