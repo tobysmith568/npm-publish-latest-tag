@@ -1,4 +1,4 @@
-﻿import { getExecOutput } from "@actions/exec";
+import { getExecOutput } from "@actions/exec";
 
 export const getNpmRegistryUrl = async (): Promise<string> => {
   const result = await getExecOutput("npm", ["config", "get", "registry"]);

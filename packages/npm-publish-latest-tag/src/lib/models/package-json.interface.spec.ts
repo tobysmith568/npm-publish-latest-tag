@@ -1,4 +1,5 @@
-import { isPackageJson, PackageJson } from "./package-json.interface";
+import { describe, expect, it } from "bun:test";
+import { isPackageJson, type PackageJson } from "./package-json.interface";
 
 describe("PackageJson interface", () => {
   const validPackageJson: PackageJson = {

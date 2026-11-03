@@ -1,5 +1,4 @@
-import getMajorVersion from "semver/functions/major";
-import semverPrerelease from "semver/functions/prerelease";
+import { major as getMajorVersion, prerelease as semverPrerelease } from "semver";
 import { getLatestVersion } from "./utils/npm-package";
 import { getPackageJson } from "./utils/package-json";
 
