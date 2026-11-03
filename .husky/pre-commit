@@ -1,3 +1,0 @@
-bunx turbo run build --filter=github-action
-cp packages/github-action/dist/action.cjs github-action-build/action.cjs
-git add github-action-build

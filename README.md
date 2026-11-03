@@ -65,7 +65,9 @@ Note the use of `id: latest_tag` so that the output can be used.
 
 ## Contributing
 
-This Action is written in TypeScript. Because GitHub Actions need to be in JavaScript, the compilation output for this repository is **not** gitignored and should be committed. When you run `npm install` a pre-commit git-hook will be configured using [`husky`](https://www.npmjs.com/package/husky) which will re-compile the build output, and stage the relevant changes for you.
+This repository is a [Bun](https://bun.com) workspace using [Turborepo](https://turborepo.com), and the Action is written in TypeScript. Run `bun install` to get started, then `bun run build`, `bun run test`, `bun run lint`, `bun run typecheck` and `bun run format:check` (or `bun run format` to fix formatting).
+
+GitHub Actions have to be JavaScript, but the compiled bundle is **not** committed to `main`. The release workflow builds it and commits it to a release commit that only the version tags (`vX.Y.Z`, `vX.Y` and `vX`) point at. Because `action.yml` points at the built bundle, run `bun run build` before using the Action from a local checkout.
 
 ## License
 
