@@ -6,7 +6,7 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   {
-    ignores: ["**/dist/**", "**/node_modules/**", "**/coverage/**", "**/github-action-build/**"]
+    ignores: ["**/dist/**", "**/node_modules/**", "**/coverage/**"]
   },
   recommended,
   node,

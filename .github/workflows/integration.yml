@@ -106,19 +106,19 @@ jobs:
       - name: Build
         run: bun run build
 
-      # The bundle is committed until it is built as part of the release, so make sure it hasn't
-      # drifted from the source (e.g. a commit made with the pre-commit hook skipped)
-      - name: Check the committed bundle is up to date
-        run: |
-          Copy-Item packages/github-action/dist/action.cjs github-action-build/action.cjs
-          git diff --exit-code github-action-build
-
-      # Only the library is published to npm, so it is the only build that gets passed on
       - name: Upload Library Build
         uses: actions/upload-artifact@v7
         with:
           name: library-build
           path: packages/npm-publish-latest-tag/dist
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Upload Action Build
+        uses: actions/upload-artifact@v7
+        with:
+          name: action-build
+          path: packages/github-action/dist
           retention-days: 1
           if-no-files-found: error
 
@@ -174,9 +174,19 @@ jobs:
 
     timeout-minutes: 10
 
+    needs:
+      - build
+
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+
+      # action.yml points at the built bundle, which isn't committed
+      - name: Download Action Build
+        uses: actions/download-artifact@v8
+        with:
+          name: action-build
+          path: packages/github-action/dist
 
       - if: always()
         uses: ./

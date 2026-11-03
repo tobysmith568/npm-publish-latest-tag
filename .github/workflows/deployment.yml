@@ -113,6 +113,7 @@ jobs:
     name: Create GitHub Release
 
     needs:
+      - calculate
       - publish
 
     runs-on: ubuntu-latest
@@ -126,37 +127,51 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Download Action Build
+        uses: actions/download-artifact@v8
+        with:
+          name: action-build
+          path: packages/github-action/dist
+
+      # GitHub runs an Action from a committed file, so the bundle is committed here on a commit
+      # that nothing but the release tags point at. It never lands on a branch.
+      #
+      # The floating minor and major tags only move for a stable release of the current major:
+      # pre-releases and patches to old majors only get their exact version tag.
+      - name: Tag the release commit
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout --detach
+          git add --force packages/github-action/dist/action.cjs
+          git commit --message "Release v$VERSION"
+
+          tags=("v$VERSION")
+
+          if [ "$NPM_TAG" = "latest" ] && [[ "$VERSION" != *-* ]]; then
+            IFS=. read -r major minor _ <<< "$VERSION"
+            tags+=("v$major.$minor" "v$major")
+          fi
+
+          for tag in "${tags[@]}"; do
+            git tag --force "$tag"
+          done
+
+          git push --force origin "${tags[@]/#/refs/tags/}"
+        env:
+          VERSION: ${{ inputs.version }}
+          NPM_TAG: ${{ needs.calculate.outputs.npm_tag }}
+
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ inputs.version }}
+          prerelease: ${{ contains(inputs.version, '-') }}
+          make_latest: ${{ needs.calculate.outputs.npm_tag == 'latest' }}
           generate_release_notes: true
           body: |
             # Release v${{ inputs.version }}
 
             Download from [npm](https://www.npmjs.com/package/npm-publish-latest-tag/v/${{ inputs.version }}): `npm install npm-publish-latest-tag@${{ inputs.version }} --save-dev`
-
-      - name: Calculate minor version
-        id: minor
-        run: |
-          $version = $env:VERSION.Split(".") | Select -First 2 | Join-String -Separator "."
-          "minorOnlyVersion=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-        env:
-          VERSION: ${{ inputs.version }}
-
-      - name: Calculate major version
-        id: major
-        run: |
-          $version = $env:VERSION.Split(".") | Select -First 1
-          "majorOnlyVersion=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-        env:
-          VERSION: ${{ inputs.version }}
-
-      - name: Tag Commit
-        run: |
-          git tag --force "v$env:VERSION"
-          git tag --force "v${{ steps.minor.outputs.minorOnlyVersion }}"
-          git tag --force "v${{ steps.major.outputs.majorOnlyVersion }}"
-          git push --tags --force
-        env:
-          VERSION: ${{ inputs.version }}
