@@ -1,5 +1,5 @@
 import { readFile } from "fs";
-import { isPackageJson, PackageJson } from "../models/package-json.interface";
+import { isPackageJson, type PackageJson } from "../models/package-json.interface";
 
 const readFileAsync = (path: string): Promise<string> => {
   return new Promise((resolve, reject) => {

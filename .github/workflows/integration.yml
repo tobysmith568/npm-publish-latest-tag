@@ -1,4 +1,6 @@
-name: CI
+name: Continuous Integration
+run-name: Continuous Integration for ${{ (github.event.pull_request.number && format('PR {0}', github.event.pull_request.number)) || github.ref_name }}
+
 on:
   push:
     branches:
@@ -7,144 +9,174 @@ on:
   pull_request:
     branches:
       - main
-      - renovate/*
   workflow_call:
-    inputs:
-      version:
-        description: The version to set in the package.json files
-        default: "0.0.0"
-        required: false
-        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 defaults:
   run:
     shell: pwsh
 
-env:
-  NODE_VERSION: 24
-
 jobs:
+  format:
+    name: Format
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup
+
+      - name: Run Prettier
+        run: bun run format:check
+
   lint:
     name: Lint
 
     runs-on: ubuntu-latest
 
+    timeout-minutes: 5
+
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - name: Checkout
+        uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
+      - uses: ./.github/actions/setup
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Run ESLint
+        run: bun run lint
 
-      - name: Run EsLint
-        run: npx nx run-many --target lint
-
-      - name: Run Prettier
-        run: npx prettier --check .
-
-  licenses:
-    name: Check Licenses
+  typecheck:
+    name: Typecheck
 
     runs-on: ubuntu-latest
 
+    timeout-minutes: 5
+
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - name: Checkout
+        uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
+      - uses: ./.github/actions/setup
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Check types
+        run: bun run typecheck
 
-      - name: Run License Cop
-        run: npx license-cop
+  licence:
+    name: Check licences
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup
+
+      - name: Check licences
+        run: bun run license-check
 
   build:
     name: Build
 
     runs-on: ubuntu-latest
 
+    timeout-minutes: 10
+
+    needs:
+      - typecheck
+
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - name: Checkout
+        uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+      - uses: ./.github/actions/setup
 
       - name: Build
-        run: npx nx run-many --target build --configuration production
+        run: bun run build
 
-      - name: Log Version
-        run: Write-Host ${{ inputs.version }}
+      # The bundle is committed until it is built as part of the release, so make sure it hasn't
+      # drifted from the source (e.g. a commit made with the pre-commit hook skipped)
+      - name: Check the committed bundle is up to date
+        run: |
+          Copy-Item packages/github-action/dist/action.cjs github-action-build/action.cjs
+          git diff --exit-code github-action-build
 
-      - name: Set Version
-        if: inputs.version != ''
-        run: npx nx run-many --target version --args="--version=${{ inputs.version }}"
-
-      - name: Upload build
+      # Only the library is published to npm, so it is the only build that gets passed on
+      - name: Upload Library Build
         uses: actions/upload-artifact@v7
         with:
-          name: build
-          path: dist
+          name: library-build
+          path: packages/npm-publish-latest-tag/dist
           retention-days: 1
+          if-no-files-found: error
 
   test:
     name: Test
 
     runs-on: ubuntu-latest
 
+    timeout-minutes: 10
+
+    needs:
+      - typecheck
+
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - name: Checkout
+        uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+      - uses: ./.github/actions/setup
 
       - name: Run Tests
-        run: npx nx run-many --target test --configuration ci
+        run: bun run test
 
       - name: Codecov
         uses: codecov/codecov-action@v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: coverage
+
+  codeql:
+    name: CodeQL
+
+    uses: ./.github/workflows/codeql.yml
+
+    secrets: inherit
+
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
 
   e2e:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
           - macos-latest
           - windows-latest
-        node:
-          - 22
-          - 24
-          - 25
 
-    name: E2E using Node.JS ${{ matrix.node }} on ${{ matrix.os }}
+    name: E2E on ${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
 
+    timeout-minutes: 10
+
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - name: Checkout
+        uses: actions/checkout@v7
 
       - if: always()
         uses: ./
@@ -153,7 +185,6 @@ jobs:
         with:
           package-json: "./e2e/higher-patch-version/package.json"
       - if: always()
-        shell: pwsh
         run: 'exit ("${{ steps.higher-patch-version.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
 
       - if: always()
@@ -163,7 +194,6 @@ jobs:
         with:
           package-json: "./e2e/higher-minor-version/package.json"
       - if: always()
-        shell: pwsh
         run: 'exit ("${{ steps.higher-minor-version.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
 
       - if: always()
@@ -173,7 +203,6 @@ jobs:
         with:
           package-json: "./e2e/higher-major-version/package.json"
       - if: always()
-        shell: pwsh
         run: 'exit ("${{ steps.higher-major-version.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
 
       - if: always()
@@ -183,7 +212,6 @@ jobs:
         with:
           package-json: "./e2e/higher-patch-version-than-v1/package.json"
       - if: always()
-        shell: pwsh
         run: 'exit ("${{ steps.higher-patch-version-than-v1.outputs.latest-tag }}" -eq "latest-1" ? 0 : 1)'
 
       - if: always()
@@ -193,7 +221,6 @@ jobs:
         with:
           package-json: "./e2e/higher-minor-version-than-v1/package.json"
       - if: always()
-        shell: pwsh
         run: 'exit ("${{ steps.higher-minor-version-than-v1.outputs.latest-tag }}" -eq "latest-1" ? 0 : 1)'
 
       - if: always()
@@ -203,7 +230,6 @@ jobs:
         with:
           package-json: "./e2e/lower-major-version-than-all/package.json"
       - if: always()
-        shell: pwsh
         run: 'exit ("${{ steps.lower-major-version-than-all.outputs.latest-tag }}" -eq "latest-0" ? 0 : 1)'
 
       - if: always()
@@ -213,7 +239,6 @@ jobs:
         with:
           package-json: "./e2e/does-not-exist/package.json"
       - if: always()
-        shell: pwsh
         run: 'exit ("${{ steps.does-not-exist.outputs.latest-tag }}" -eq "latest" ? 0 : 1)'
 
       - if: always()
@@ -223,5 +248,4 @@ jobs:
         with:
           package-json: "./e2e/invalid-path/package.json"
       - if: always()
-        shell: pwsh
         run: 'exit ("${{ steps.invalid-path.outputs.latest-tag }}" -eq "" ? 0 : 1)'

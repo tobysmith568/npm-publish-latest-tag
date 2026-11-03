@@ -1,122 +1,60 @@
-import { readFile } from "fs";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { getPackageJson } from "./package-json";
 
-jest.mock("fs", () => ({
-  readFile: jest.fn()
-}));
-
-type ReadFileCallback = (error: Error | null, data: string | null) => void;
-
-// Needed because the FS readFile types are slightly off
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type FsReadFile = any;
-
 describe("package.json utils", () => {
-  const pathToPackageJson = "path/to/package.json";
-  const mockedReadFile = jest.mocked(readFile);
+  let directory: string;
+  let pathToPackageJson: string;
 
-  beforeEach(() => {
-    jest.resetAllMocks();
+  const givenPackageJson = async (contents: string) => {
+    await writeFile(pathToPackageJson, contents);
+  };
 
-    const mockReadFileImplementation: FsReadFile = (
-      path: string,
-      encoding: string,
-      callback: ReadFileCallback
-    ) => {
-      callback(null, '{ "name": "test-package", "version": "1.2.3" }');
-    };
-
-    mockedReadFile.mockImplementation(mockReadFileImplementation);
+  beforeEach(async () => {
+    directory = await mkdtemp(join(tmpdir(), "npm-publish-latest-tag-"));
+    pathToPackageJson = join(directory, "package.json");
   });
 
-  afterAll(() => {
-    jest.restoreAllMocks();
+  afterEach(async () => {
+    await rm(directory, { recursive: true, force: true });
   });
 
   describe("getPackageJson", () => {
-    it("should pass the given path to fs readFile", async () => {
-      await getPackageJson(pathToPackageJson);
+    it("should throw if the file doesn't exist", async () => {
+      const result = getPackageJson(pathToPackageJson);
 
-      expect(mockedReadFile).toHaveBeenCalledWith(
-        pathToPackageJson,
-        expect.any(String),
-        expect.any(Function)
-      );
-    });
-
-    it("should pass utf-8 fs readFile", async () => {
-      await getPackageJson(pathToPackageJson);
-
-      expect(mockedReadFile).toHaveBeenCalledWith(
-        expect.any(String),
-        "utf-8",
-        expect.any(Function)
-      );
-    });
-
-    it("should throw if fs readFile calls the callback with an error", async () => {
-      const error = new Error("fs readFile error");
-
-      const mockReadFileImplementation: FsReadFile = (
-        path: string,
-        encoding: string,
-        callback: ReadFileCallback
-      ) => {
-        callback(error, null);
-      };
-      mockedReadFile.mockImplementation(mockReadFileImplementation);
-
-      expect(getPackageJson(pathToPackageJson)).rejects.toThrowError(
-        "path/to/package.json is not a valid package.json"
-      );
+      await expect(result).rejects.toThrow(`${pathToPackageJson} is not a valid package.json`);
     });
 
     it("should throw if the package.json isn't valid json", async () => {
-      const mockReadFileImplementation: FsReadFile = (
-        path: string,
-        encoding: string,
-        callback: ReadFileCallback
-      ) => {
-        callback(null, "This is not valid json");
-      };
-      mockedReadFile.mockImplementation(mockReadFileImplementation);
+      await givenPackageJson("This is not valid json");
 
-      expect(getPackageJson(pathToPackageJson)).rejects.toThrowError(
-        "path/to/package.json is not a valid package.json"
-      );
+      const result = getPackageJson(pathToPackageJson);
+
+      await expect(result).rejects.toThrow(`${pathToPackageJson} is not a valid package.json`);
     });
 
     it("should throw if the package.json doesn't have a name key", async () => {
-      const mockReadFileImplementation: FsReadFile = (
-        path: string,
-        encoding: string,
-        callback: ReadFileCallback
-      ) => {
-        callback(null, '{ "version": "1.2.3" }');
-      };
-      mockedReadFile.mockImplementation(mockReadFileImplementation);
+      await givenPackageJson('{ "version": "1.2.3" }');
 
-      expect(getPackageJson(pathToPackageJson)).rejects.toThrowError(
-        "path/to/package.json is not a valid package.json"
-      );
+      const result = getPackageJson(pathToPackageJson);
+
+      await expect(result).rejects.toThrow(`${pathToPackageJson} is not a valid package.json`);
     });
 
     it("should throw if the package.json doesn't have a version key", async () => {
-      const mockReadFileImplementation: FsReadFile = (
-        path: string,
-        encoding: string,
-        callback: ReadFileCallback
-      ) => {
-        callback(null, '{ "name": "test-package" }');
-      };
-      mockedReadFile.mockImplementation(mockReadFileImplementation);
+      await givenPackageJson('{ "name": "test-package" }');
 
-      expect(getPackageJson(pathToPackageJson)).rejects.toThrowError(
-        "path/to/package.json is not a valid package.json"
-      );
+      const result = getPackageJson(pathToPackageJson);
+
+      await expect(result).rejects.toThrow(`${pathToPackageJson} is not a valid package.json`);
     });
 
     it("should return the parsed package.json", async () => {
+      await givenPackageJson('{ "name": "test-package", "version": "1.2.3" }');
+
       const packageJson = await getPackageJson(pathToPackageJson);
 
       expect(packageJson).toEqual({

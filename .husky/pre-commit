@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-npx nx run github-action:build --configuration production
-git add github-action-build/**
+bunx turbo run build --filter=github-action
+cp packages/github-action/dist/action.cjs github-action-build/action.cjs
+git add github-action-build

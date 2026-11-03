@@ -1,0 +1,162 @@
+name: Deployment
+run-name: Deployment for v${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: A SemVer for the release
+        default: ""
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: pwsh
+
+concurrency:
+  group: Continuous Deployment
+  cancel-in-progress: false
+
+jobs:
+  calculate:
+    name: Calculate Variables
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 5
+
+    permissions:
+      contents: read
+
+    outputs:
+      npm_tag: ${{ steps.npm_tag.outputs.latest-tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup
+
+      - name: Set Version
+        run: bunx turbo run version
+        env:
+          VERSION: ${{ inputs.version }}
+
+      - name: Calculate npm tag
+        uses: tobysmith568/npm-publish-latest-tag@v1
+        id: npm_tag
+        with:
+          package-json: ./packages/npm-publish-latest-tag/package.json
+
+  integration:
+    name: Run Continuous Integration
+
+    needs:
+      - calculate
+
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    uses: ./.github/workflows/integration.yml
+    secrets: inherit
+
+  publish:
+    name: Publish to npm
+
+    needs:
+      - calculate
+      - integration
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup
+        with:
+          registry-url: https://registry.npmjs.org
+
+      - name: Download Library Build
+        uses: actions/download-artifact@v8
+        with:
+          name: library-build
+          path: packages/npm-publish-latest-tag/dist
+
+      - name: Set Version
+        run: bunx turbo run version
+        env:
+          VERSION: ${{ inputs.version }}
+
+      - name: Pack
+        run: bunx turbo run pack
+
+      - name: Upgrade npm for trusted publishing
+        run: npm install --global npm@latest
+
+      - name: Publish
+        run: bunx turbo run publish
+        env:
+          NPM_TAG: ${{ needs.calculate.outputs.npm_tag }}
+
+  release:
+    name: Create GitHub Release
+
+    needs:
+      - publish
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 5
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ inputs.version }}
+          generate_release_notes: true
+          body: |
+            # Release v${{ inputs.version }}
+
+            Download from [npm](https://www.npmjs.com/package/npm-publish-latest-tag/v/${{ inputs.version }}): `npm install npm-publish-latest-tag@${{ inputs.version }} --save-dev`
+
+      - name: Calculate minor version
+        id: minor
+        run: |
+          $version = $env:VERSION.Split(".") | Select -First 2 | Join-String -Separator "."
+          "minorOnlyVersion=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        env:
+          VERSION: ${{ inputs.version }}
+
+      - name: Calculate major version
+        id: major
+        run: |
+          $version = $env:VERSION.Split(".") | Select -First 1
+          "majorOnlyVersion=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        env:
+          VERSION: ${{ inputs.version }}
+
+      - name: Tag Commit
+        run: |
+          git tag --force "v$env:VERSION"
+          git tag --force "v${{ steps.minor.outputs.minorOnlyVersion }}"
+          git tag --force "v${{ steps.major.outputs.majorOnlyVersion }}"
+          git push --tags --force
+        env:
+          VERSION: ${{ inputs.version }}

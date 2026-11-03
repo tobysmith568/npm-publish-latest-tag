@@ -1,52 +1,57 @@
+import axios, { type AxiosResponse } from "axios";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { getLatestTag } from "./get-latest-tag";
-import { getLatestVersion } from "./utils/npm-package";
-import { getPackageJson } from "./utils/package-json";
-
-jest.mock("./utils/npm-package");
-jest.mock("./utils/package-json");
 
 describe("getLatestTag", () => {
-  const packageJsonPath = "path/to/package.json";
+  const packageName = "package-name";
   const registryUrl = "https://registry.url.com";
 
-  const mockedGetLatestVersion = jest.mocked(getLatestVersion);
-  const mockedGetPackageJson = jest.mocked(getPackageJson);
+  let directory: string;
+  let packageJsonPath: string;
+  let axiosGet: ReturnType<typeof spyOn<typeof axios, "get">>;
 
-  const givenLocalVersion = (version: string) =>
-    mockedGetPackageJson.mockResolvedValue({ name: "package-name", version });
+  const givenLocalVersion = async (version: string) => {
+    await writeFile(packageJsonPath, JSON.stringify({ name: packageName, version }));
+  };
 
-  const givenRemoteVersion = (version: string | undefined) =>
-    mockedGetLatestVersion.mockResolvedValue(version);
+  const givenRemoteVersion = (version: string | undefined) => {
+    const response = { status: 200, data: { "dist-tags": { latest: version } } };
+    axiosGet.mockResolvedValue(response as AxiosResponse);
+  };
 
-  beforeEach(() => {
-    jest.resetAllMocks();
+  beforeEach(async () => {
+    directory = await mkdtemp(join(tmpdir(), "npm-publish-latest-tag-"));
+    packageJsonPath = join(directory, "package.json");
+    axiosGet = spyOn(axios, "get");
+  });
+
+  afterEach(async () => {
+    axiosGet.mockRestore();
+    await rm(directory, { recursive: true, force: true });
   });
 
   describe("registry url", () => {
-    beforeEach(() => {
-      givenLocalVersion("1.0.0");
+    beforeEach(async () => {
+      await givenLocalVersion("1.0.0");
       givenRemoteVersion("1.0.0");
     });
 
     it("should default to the public npm registry when none is given", async () => {
       await getLatestTag(packageJsonPath);
 
-      expect(mockedGetLatestVersion).toHaveBeenCalledWith(
-        "package-name",
-        "https://registry.npmjs.org"
+      expect(axiosGet).toHaveBeenCalledWith(
+        `https://registry.npmjs.org/${packageName}`,
+        expect.any(Object)
       );
     });
 
     it("should use the given registry url instead of the default", async () => {
       await getLatestTag(packageJsonPath, registryUrl);
 
-      expect(mockedGetLatestVersion).toHaveBeenCalledWith("package-name", registryUrl);
-    });
-
-    it("should read the package.json from the given path", async () => {
-      await getLatestTag(packageJsonPath, registryUrl);
-
-      expect(mockedGetPackageJson).toHaveBeenCalledWith(packageJsonPath);
+      expect(axiosGet).toHaveBeenCalledWith(`${registryUrl}/${packageName}`, expect.any(Object));
     });
   });
 
@@ -77,7 +82,7 @@ describe("getLatestTag", () => {
       }
     ].forEach(({ local, remote, expected, name }) =>
       it(`should return ${expected} for ${name} (${local} vs ${remote})`, async () => {
-        givenLocalVersion(local);
+        await givenLocalVersion(local);
         givenRemoteVersion(remote);
 
         const result = await getLatestTag(packageJsonPath, registryUrl);

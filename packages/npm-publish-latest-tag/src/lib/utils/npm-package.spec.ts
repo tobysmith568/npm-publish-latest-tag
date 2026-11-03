@@ -1,13 +1,25 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { getLatestVersion } from "./npm-package";
-
-jest.mock("axios");
 
 describe("npm package utils", () => {
   const packageName = "package-name";
   const registryUrl = "https://registry.url.com";
 
-  const mockedAxiosGet = jest.mocked(axios.get);
+  let axiosGet: ReturnType<typeof spyOn<typeof axios, "get">>;
+
+  const givenResponse = (response: Partial<AxiosResponse>) => {
+    axiosGet.mockResolvedValue(response as AxiosResponse);
+  };
+
+  beforeEach(() => {
+    axiosGet = spyOn(axios, "get");
+    givenResponse({ status: 200, data: { "dist-tags": { latest: "1.0.0" } } });
+  });
+
+  afterEach(() => {
+    axiosGet.mockRestore();
+  });
 
   describe("getLatestVersion", () => {
     it("should call axios get with the registry url and package name", async () => {
@@ -15,7 +27,7 @@ describe("npm package utils", () => {
 
       await getLatestVersion(packageName, registryUrl);
 
-      expect(mockedAxiosGet).toHaveBeenCalledWith(fullUrl, expect.any(Object));
+      expect(axiosGet).toHaveBeenCalledWith(fullUrl, expect.any(Object));
     });
 
     it("should call axios get with the minimal accept header with json fallback", async () => {
@@ -24,16 +36,14 @@ describe("npm package utils", () => {
 
       await getLatestVersion(packageName, registryUrl);
 
-      expect(mockedAxiosGet).toHaveBeenCalledWith(expect.any(String), {
+      expect(axiosGet).toHaveBeenCalledWith(expect.any(String), {
         headers: { Accept: acceptHeader }
       });
     });
 
     [0, 100, 201, 204, 301, 400, 401, 404, 500].forEach(status =>
       it(`should return undefined if the status (${status}) is not 200`, async () => {
-        mockedAxiosGet.mockResolvedValueOnce({
-          status
-        });
+        givenResponse({ status });
 
         const result = await getLatestVersion(packageName, registryUrl);
 
@@ -42,7 +52,7 @@ describe("npm package utils", () => {
     );
 
     it("should return undefined if axios get throws", async () => {
-      mockedAxiosGet.mockRejectedValueOnce(new Error("axios get error"));
+      axiosGet.mockRejectedValue(new Error("axios get error"));
 
       const result = await getLatestVersion(packageName, registryUrl);
 
@@ -52,14 +62,7 @@ describe("npm package utils", () => {
     it("should return the latest dist-tag if the status is 200", async () => {
       const latestVersion = "1.0.0";
 
-      mockedAxiosGet.mockResolvedValueOnce({
-        status: 200,
-        data: {
-          "dist-tags": {
-            latest: latestVersion
-          }
-        }
-      });
+      givenResponse({ status: 200, data: { "dist-tags": { latest: latestVersion } } });
 
       const result = await getLatestVersion(packageName, registryUrl);
 
@@ -67,14 +70,7 @@ describe("npm package utils", () => {
     });
 
     it("should return undefined if there is no latest dist-tag", async () => {
-      mockedAxiosGet.mockResolvedValueOnce({
-        status: 200,
-        data: {
-          "dist-tags": {
-            notLatest: "1.0.0"
-          }
-        }
-      });
+      givenResponse({ status: 200, data: { "dist-tags": { notLatest: "1.0.0" } } });
 
       const result = await getLatestVersion(packageName, registryUrl);
 
@@ -82,12 +78,7 @@ describe("npm package utils", () => {
     });
 
     it("should return undefined if there are no dist-tags", async () => {
-      mockedAxiosGet.mockResolvedValueOnce({
-        status: 200,
-        data: {
-          "dist-tags": undefined
-        }
-      });
+      givenResponse({ status: 200, data: { "dist-tags": undefined } });
 
       const result = await getLatestVersion(packageName, registryUrl);
 
