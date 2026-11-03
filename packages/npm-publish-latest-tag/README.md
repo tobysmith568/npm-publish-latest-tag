@@ -58,6 +58,12 @@ const tagToPublishWith = await getLatestTag("./package.json");
 //...
 ```
 
+By default the public npm registry (`https://registry.npmjs.org`) is checked for the latest published version. To check a different registry, pass its URL as the second argument:
+
+```typescript
+const tagToPublishWith = await getLatestTag("./package.json", "https://registry.example.com");
+```
+
 ## License
 
 npm-publish-latest-tag and npm-publish-latest-tag-github-action are licensed under the [ISC License](./LICENSE.md).
