@@ -1,4 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["local>tobysmith568/renovate-config"]
+  "extends": ["local>tobysmith568/renovate-config"],
+  "packageRules": [
+    {
+      "description": [
+        "The library supports Node 22.12 and up, so its types stay on 22 to stop code that needs a newer Node from typechecking. The shared config pins @types/node to 24."
+      ],
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "^22"
+    }
+  ]
 }

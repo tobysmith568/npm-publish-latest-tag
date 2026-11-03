@@ -146,6 +146,55 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  library:
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 22.12.0
+          - 24
+          - 26
+
+    name: Library on Node.js ${{ matrix.node }}
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
+    needs:
+      - build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Download Library Build
+        uses: actions/download-artifact@v8
+        with:
+          name: library-build
+          path: packages/npm-publish-latest-tag/dist
+
+      - name: Pack
+        working-directory: packages/npm-publish-latest-tag
+        run: npm pack --pack-destination ../../e2e/library
+
+      - name: Install the package
+        working-directory: e2e/library
+        run: npm install --no-save --no-package-lock ./npm-publish-latest-tag-0.0.0.tgz
+
+      - name: Use it with import
+        working-directory: e2e/library
+        run: node esm.mjs
+
+      - name: Use it with require
+        working-directory: e2e/library
+        run: node cjs.cjs
+
   codeql:
     name: CodeQL
 
