@@ -3,7 +3,6 @@ import { getLatestTag, NpmPublishLatestTagError } from "npm-publish-latest-tag";
 import { getNpmRegistryUrl } from "./lib/npm-registry";
 
 const describeFailure = (error: unknown) => {
-  // These are down to the project or the environment, so the message says everything
   if (error instanceof NpmPublishLatestTagError) {
     return error.message;
   }

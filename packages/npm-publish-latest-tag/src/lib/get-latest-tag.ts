@@ -34,7 +34,6 @@ export const getLatestTag = async (
   return "latest";
 };
 
-/** The first section of a pre-release, e.g. `beta` for `1.2.3-beta.4` */
 const getPrereleaseLabel = (version: string): string | undefined => {
   const sections = prerelease(version);
 

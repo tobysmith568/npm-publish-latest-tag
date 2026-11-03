@@ -26,12 +26,23 @@ export const getLatestVersion = async (
 
 const getPackageUrl = (packageName: string, registryUrl: string) => {
   // `npm config get registry` ends with a slash, which would otherwise double up
-  const registry = registryUrl.replace(/\/+$/, "");
+  const registry = trimTrailingSlashes(registryUrl);
 
   // A scoped name keeps its "@", but the "/" between the scope and the name has to be escaped
-  const escapedName = packageName.replace("/", "%2F");
+  const escapedName = packageName.replaceAll("/", "%2F");
 
   return `${registry}/${escapedName}`;
+};
+
+// Not a regex, as one that backtracks over a long run of slashes gets slow on hostile input
+const trimTrailingSlashes = (value: string) => {
+  let end = value.length;
+
+  while (end > 0 && value[end - 1] === "/") {
+    end--;
+  }
+
+  return value.slice(0, end);
 };
 
 const getLatestDistTag = (body: unknown): string | undefined => {

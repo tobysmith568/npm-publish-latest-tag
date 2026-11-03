@@ -37,6 +37,33 @@ describe("getLatestVersion", () => {
       expect(fetchSpy).toHaveBeenCalledWith(`${registryUrl}/${packageName}`, expect.any(Object));
     });
 
+    it("should trim every trailing slash from the registry url", async () => {
+      await getLatestVersion(packageName, `${registryUrl}///`);
+
+      expect(fetchSpy).toHaveBeenCalledWith(`${registryUrl}/${packageName}`, expect.any(Object));
+    });
+
+    it("should only trim slashes from the end of the registry url", async () => {
+      await getLatestVersion(packageName, `${registryUrl}/path//`);
+
+      expect(fetchSpy).toHaveBeenCalledWith(
+        `${registryUrl}/path/${packageName}`,
+        expect.any(Object)
+      );
+    });
+
+    it("should cope with a registry url that is nothing but slashes", async () => {
+      await getLatestVersion(packageName, "///");
+
+      expect(fetchSpy).toHaveBeenCalledWith(`/${packageName}`, expect.any(Object));
+    });
+
+    it("should escape every slash in a package name", async () => {
+      await getLatestVersion("a/b/c", registryUrl);
+
+      expect(fetchSpy).toHaveBeenCalledWith(`${registryUrl}/a%2Fb%2Fc`, expect.any(Object));
+    });
+
     it("should escape the slash in a scoped package name", async () => {
       await getLatestVersion("@scope/package-name", registryUrl);
 
