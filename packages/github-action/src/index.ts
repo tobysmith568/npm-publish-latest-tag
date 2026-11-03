@@ -1,38 +1,32 @@
 import { getInput, setFailed, setOutput } from "@actions/core";
-import { getLatestTag } from "npm-publish-latest-tag";
+import { getLatestTag, NpmPublishLatestTagError } from "npm-publish-latest-tag";
 import { getNpmRegistryUrl } from "./lib/npm-registry";
 
-const main = async () => {
-  try {
-    await runGitHubAction();
-  } catch (error: unknown) {
-    handleErrorInGitHubAction(error);
+const describeFailure = (error: unknown) => {
+  // These are down to the project or the environment, so the message says everything
+  if (error instanceof NpmPublishLatestTagError) {
+    return error.message;
   }
-};
 
-const runGitHubAction = async () => {
-  const packageJsonLocation = getInput("package-json");
-  const registryUrl = await getNpmRegistryUrl();
-
-  const latestTag = await getLatestTag(packageJsonLocation, registryUrl);
-
-  setOutput("latest-tag", latestTag);
-};
-
-const handleErrorInGitHubAction = (error: unknown) => {
+  // Anything else is a bug, so keep the stack to make it reportable
   if (error instanceof Error) {
-    setFailed(error.message);
-    return;
+    return `Unexpected error: ${error.stack ?? error.message}`;
   }
 
-  if (typeof error === "string") {
-    setFailed(error);
-    return;
-  }
-
-  setFailed("Action failed with an unknown error");
+  return "Action failed with an unknown error";
 };
 
-(async () => {
-  await main();
-})();
+const run = async () => {
+  try {
+    const packageJsonLocation = getInput("package-json");
+    const registryUrl = await getNpmRegistryUrl();
+
+    const latestTag = await getLatestTag(packageJsonLocation, registryUrl);
+
+    setOutput("latest-tag", latestTag);
+  } catch (error) {
+    setFailed(describeFailure(error));
+  }
+};
+
+void run();

@@ -1,6 +1,6 @@
-import { major as getMajorVersion, prerelease as semverPrerelease } from "semver";
-import { getLatestVersion } from "./utils/npm-package";
-import { getPackageJson } from "./utils/package-json";
+import { major, prerelease } from "semver";
+import { getLatestVersion } from "./get-latest-version";
+import { getPackageJson } from "./package-json";
 
 const defaultRegistryUrl = "https://registry.npmjs.org";
 
@@ -8,36 +8,37 @@ export const getLatestTag = async (
   packageJsonPath: string,
   registryUrl: string = defaultRegistryUrl
 ): Promise<string> => {
-  const packageJson = await getPackageJson(packageJsonPath);
+  const { name, version } = await getPackageJson(packageJsonPath);
 
-  const localVersion = packageJson.version;
-  const remoteVersion = await getLatestVersion(packageJson.name, registryUrl);
+  const remoteVersion = await getLatestVersion(name, registryUrl);
 
+  // Nothing is published yet, so there is no existing "latest" to protect
   if (!remoteVersion) {
     return "latest";
   }
 
-  const localMajorVersion = getMajorVersion(localVersion);
-  const remoteMajorVersion = getMajorVersion(remoteVersion);
+  const localMajor = major(version);
 
-  const localPrerelease = getPrerelease(localVersion);
-  if (localPrerelease) {
-    return `latest-${localMajorVersion}-${localPrerelease}`;
+  const prereleaseLabel = getPrereleaseLabel(version);
+
+  if (prereleaseLabel) {
+    return `latest-${localMajor}-${prereleaseLabel}`;
   }
 
-  if (localMajorVersion < remoteMajorVersion) {
-    return `latest-${localMajorVersion}`;
+  const remoteMajor = major(remoteVersion);
+
+  if (localMajor < remoteMajor) {
+    return `latest-${localMajor}`;
   }
 
   return "latest";
 };
 
-const getPrerelease = (version: string): string | undefined => {
-  const prereleaseSections = semverPrerelease(version);
+/** The first section of a pre-release, e.g. `beta` for `1.2.3-beta.4` */
+const getPrereleaseLabel = (version: string): string | undefined => {
+  const sections = prerelease(version);
 
-  if (!prereleaseSections || prereleaseSections.length === 0) {
-    return undefined;
-  }
+  const [firstSection] = sections ?? [];
 
-  return "" + prereleaseSections[0];
+  return firstSection === undefined ? undefined : String(firstSection);
 };
