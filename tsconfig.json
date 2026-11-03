@@ -14,7 +14,9 @@
     "declarationMap": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["bun", "node"],
+    "noEmit": true
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp", "**/dist", "**/coverage"]
 }

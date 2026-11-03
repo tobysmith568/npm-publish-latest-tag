@@ -22,7 +22,7 @@
       "name": "github-action",
       "version": "0.0.0",
       "dependencies": {
-        "@actions/core": "^3.0.0",
+        "@actions/core": "^3.0.1",
         "@actions/exec": "^3.0.0",
         "npm-publish-latest-tag": "workspace:*",
       },
@@ -31,7 +31,7 @@
       "name": "npm-publish-latest-tag",
       "version": "0.0.0",
       "dependencies": {
-        "semver": "^7.5.4",
+        "semver": "^7.8.6",
       },
       "devDependencies": {
         "@types/semver": "^7.8.0",

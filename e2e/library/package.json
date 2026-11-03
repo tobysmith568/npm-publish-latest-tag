@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "name": "library-e2e",
+  "version": "0.0.0",
+  "description": "Installs the packed library and uses it the way a consumer would"
+}

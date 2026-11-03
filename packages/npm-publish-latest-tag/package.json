@@ -37,7 +37,7 @@
     "publish": "npm publish *.tgz --access public --provenance --tag $NPM_TAG"
   },
   "dependencies": {
-    "semver": "^7.5.4"
+    "semver": "^7.8.6"
   },
   "devDependencies": {
     "@types/semver": "^7.8.0"
