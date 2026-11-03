@@ -1,9 +1,9 @@
-import axios, { type AxiosResponse } from "axios";
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { getLatestTag } from "./get-latest-tag";
+import { PackageJsonError } from "./package-json-error";
 
 describe("getLatestTag", () => {
   const packageName = "package-name";
@@ -11,25 +11,24 @@ describe("getLatestTag", () => {
 
   let directory: string;
   let packageJsonPath: string;
-  let axiosGet: ReturnType<typeof spyOn<typeof axios, "get">>;
+  let fetchSpy: ReturnType<typeof spyOn<typeof globalThis, "fetch">>;
 
   const givenLocalVersion = async (version: string) => {
     await writeFile(packageJsonPath, JSON.stringify({ name: packageName, version }));
   };
 
   const givenRemoteVersion = (version: string | undefined) => {
-    const response = { status: 200, data: { "dist-tags": { latest: version } } };
-    axiosGet.mockResolvedValue(response as AxiosResponse);
+    fetchSpy.mockResolvedValue(Response.json({ "dist-tags": { latest: version } }));
   };
 
   beforeEach(async () => {
     directory = await mkdtemp(join(tmpdir(), "npm-publish-latest-tag-"));
     packageJsonPath = join(directory, "package.json");
-    axiosGet = spyOn(axios, "get");
+    fetchSpy = spyOn(globalThis, "fetch");
   });
 
   afterEach(async () => {
-    axiosGet.mockRestore();
+    fetchSpy.mockRestore();
     await rm(directory, { recursive: true, force: true });
   });
 
@@ -42,7 +41,7 @@ describe("getLatestTag", () => {
     it("should default to the public npm registry when none is given", async () => {
       await getLatestTag(packageJsonPath);
 
-      expect(axiosGet).toHaveBeenCalledWith(
+      expect(fetchSpy).toHaveBeenCalledWith(
         `https://registry.npmjs.org/${packageName}`,
         expect.any(Object)
       );
@@ -51,13 +50,27 @@ describe("getLatestTag", () => {
     it("should use the given registry url instead of the default", async () => {
       await getLatestTag(packageJsonPath, registryUrl);
 
-      expect(axiosGet).toHaveBeenCalledWith(`${registryUrl}/${packageName}`, expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(`${registryUrl}/${packageName}`, expect.any(Object));
+    });
+  });
+
+  describe("package.json", () => {
+    it("should throw a PackageJsonError if it can't be read", async () => {
+      const result = getLatestTag(packageJsonPath, registryUrl);
+
+      await expect(result).rejects.toBeInstanceOf(PackageJsonError);
     });
   });
 
   describe("tag", () => {
-    [
+    const cases = [
       { local: "1.0.0", remote: undefined, expected: "latest", name: "not yet published" },
+      {
+        local: "1.0.0-beta",
+        remote: undefined,
+        expected: "latest",
+        name: "a pre-release that is not yet published"
+      },
       { local: "3.0.0", remote: "2.3.4", expected: "latest", name: "a new major" },
       { local: "2.4.0", remote: "2.3.4", expected: "latest", name: "a minor of the current major" },
       { local: "2.3.5", remote: "2.3.4", expected: "latest", name: "a patch of the current major" },
@@ -79,8 +92,16 @@ describe("getLatestTag", () => {
         remote: "2.3.4",
         expected: "latest-1-rc",
         name: "an old major pre-release"
+      },
+      {
+        local: "2.4.0-0",
+        remote: "2.3.4",
+        expected: "latest-2-0",
+        name: "a pre-release that is only a number"
       }
-    ].forEach(({ local, remote, expected, name }) =>
+    ];
+
+    cases.forEach(({ local, remote, expected, name }) =>
       it(`should return ${expected} for ${name} (${local} vs ${remote})`, async () => {
         await givenLocalVersion(local);
         givenRemoteVersion(remote);

@@ -37,7 +37,6 @@
     "publish": "npm publish *.tgz --access public --provenance --tag $NPM_TAG"
   },
   "dependencies": {
-    "axios": "^1.6.2",
     "semver": "^7.5.4"
   },
   "devDependencies": {

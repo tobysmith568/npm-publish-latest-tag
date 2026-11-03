@@ -41,15 +41,6 @@ Updates to older major versions will get a tag that is specific to that major ve
 
 To use this library, import it and run `getLatestTag`, passing in the location of the package.json for the npm package:
 
-```javascript
-var npmPublishLatestTag = require("npm-publish-latest-tag");
-
-// ...
-npmPublishLatestTag.getLatestTag("./package.json").then(tagToPublishWith => {
-  //...
-});
-```
-
 ```typescript
 import { getLatestTag } from "npm-publish-latest-tag";
 
@@ -57,6 +48,10 @@ import { getLatestTag } from "npm-publish-latest-tag";
 const tagToPublishWith = await getLatestTag("./package.json");
 //...
 ```
+
+This package is ESM-only and needs Node.js 22.12 or newer. On those versions it can still be loaded from CommonJS with `require("npm-publish-latest-tag")`.
+
+If the package.json can't be read or doesn't have a `name` and a `version`, `getLatestTag` rejects with a `PackageJsonError` (both it and its base class, `NpmPublishLatestTagError`, are exported).
 
 By default the public npm registry (`https://registry.npmjs.org`) is checked for the latest published version. To check a different registry, pass its URL as the second argument:
 
