@@ -53,14 +53,12 @@ Note the use of `id: latest_tag` so that the output can be used.
 - `latest-tag`: The value to use for the `--tag` option in `npm publish`
 
 ```yaml
-- uses: tobysmith568/npm-publish-latest-tag@v1
+- uses: tobysmith568/npm-publish-latest-tag@v2
   id: latest_tag
   with:
     package-json: ./package.json
 
 - run: npm publish --tag ${{ steps.latest_tag.outputs.latest-tag }}
-  env:
-    NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
 ```
 
 ## Contributing
